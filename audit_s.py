@@ -123,6 +123,7 @@ class Audit_S(ABC):
     def current_dist_null(self):
         """Update distribution_null for current round."""
 
+        #print("len(self.rounds) = " + str(len(self.rounds)))
         if len(self.rounds) == 1:
             round_draw = self.rounds[0]
         else:
@@ -134,11 +135,11 @@ class Audit_S(ABC):
             Nw_exact = self.contest.contest_ballots / 2
             Nw = math.floor(Nw_exact)
         else:
-            # If null_margin is 0, assume half of total ballots (tie case)
             # Otherwise Nw is the worst case (maximum possible value) under
-            #  the null hypothesis that the true margin is at least null_margin
-            Nw_exact = (self.contest.contest_ballots + self.null_margin) / 2
+            #  the null hypothesis that the true margin is at most null_margin
+            Nw_exact = (self.contest.contest_ballots - self.null_margin) / 2
             Nw = math.floor(Nw_exact)
+            print("underlying null dist winner votes: "+str(Nw))
 
         # Distribution updating is dependent on sampling with or without replacement
         if self.replacement:

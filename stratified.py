@@ -62,33 +62,103 @@ class Stratified():
             lambda_: values of lambda for each stratum
         """
         stratum_audits = []
-        #overall_margin = self.overall_contest.tally[          #TODO
+        winner = 'A'
+        loser = 'B'
+        overall_margin = self.overall_contest.tally[winner] - self.overall_contest.tally[loser]
+        print("overall margin: "+str(overall_margin))
         for stratum_contest, stratum_lambda in zip(strata,lambda_):
             null_margin = stratum_lambda * overall_margin
             stratum_audit = Minerva_S(self.stratum_pvalue, 1.0, stratum_contest, null_margin)
             stratum_audits.append(stratum_audit)
         return stratum_audits
 
+    def predict_value_of_lambda(self):
+        """Predict values of lambda by, yanno, totally guessing.
+
+        Returns:
+            []: values of lambda.
+        """
+        lambda_ = []
+        i = 1
+        for stratum in self.strata:
+            stratum_lambda = stratum.contest_ballots / self.overall_contest.contest_ballots
+            print("stratum "+str(i)+" lambda value: "+str(stratum_lambda))
+            lambda_.append(stratum_lambda)
+            i += 1
+
+        print("sum of lambda values: "+str(sum(lambda_)))
+        return lambda_
+
 # TESTING
-stratum1 = Contest(100000, {
-    'A': 60000,
-    'B': 40000
+
+stratum1 = Contest(45500+49500, {
+    'A': 49500,
+    'B': 45500
 }, 1, ['A'], ContestType.PLURALITY)
 
-stratum2 = Contest(50000, {
-    'A': 28000,
-    'B': 22000
+stratum2 = Contest(9000, {
+    'A': 7500,
+    'B': 1500
 }, 1, ['A'], ContestType.PLURALITY)
 
-overall = Contest(150000, {
-    'A': 28000+60000,
-    'B': 22000+40000
+overall_contest = Contest(45500+49500+9000, {
+    'A': 45500+7500,
+    'B': 49500+1500
 }, 1, ['A'], ContestType.PLURALITY)
-
 strata = []
 strata.append(stratum1)
 strata.append(stratum2)
-stratified = Stratified(strata, overall, .05)
 
-print(stratified.stratum_pvalue)
+alpha = .05
+
+stratified = Stratified(strata, overall_contest, alpha)
+
+strata_audits = stratified.create_audits_for_lambda(stratified.predict_value_of_lambda())
+
+# check out what's going on by comparing kmins of stratified to overall minerva
+
+overall_minerva = Minerva_S(alpha, 1.0, overall_contest) # null margin defaults to 0 in (tie)
+
+total_drawn = 0
+total_min = 0
+i = 1
+for stratum_audit in strata_audits:
+    print ("----------------")
+    print ("Stratum "+str(i))
+    print ("winner votes: "+str(stratum_audit.contest.tally['A'])+"  loser votes: " + str(stratum_audit.contest.tally['B']))
+    print ("required pvalue: "+str(stratum_audit.alpha))
+    print ("null margin: "+str(stratum_audit.null_margin))
+    stratum_drawn = 300
+    stratum_audit.compute_min_winner_ballots([stratum_drawn])
+    stratum_kmin = stratum_audit.min_winner_ballots[0]
+    total_drawn += stratum_drawn
+    total_min += stratum_kmin
+    i+=1
+    print ("drawn: "+str(stratum_drawn))
+    print ("kmin: "+str(stratum_kmin))
+    print ("----------------")
+print("total drawn: "+str(total_drawn))
+print("total min: "+str(total_min))
+
+print ("\n\n----------------")
+print("overall:")
+draw = 600
+overall_minerva.compute_min_winner_ballots([600])
+print("drawn:"+str(600))
+print("kmin:"+str(overall_minerva.min_winner_ballots[0]))
+"""
+ok so this initial test gives a lower kmin overall to the stratified 
+audit which is not what i was exactly thinking would happen, but no
+big deal because i'm guessing that my lambda prediction is just
+not as good as i thought it might be
+"""
+"""
+so no the plan is to come up with a more robust way of testing this stuff
+potentially using the code from corla to assist
+"""
+"""
+yanno what now that its been a couple minutes i think this result makes
+sense and is about what i should have expected.
+gonna also print pvalues now
+"""
 

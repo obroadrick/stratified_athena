@@ -60,13 +60,21 @@ class Minerva_S(Audit_S):
             raise Exception('Attempted to call stopping condition without any rounds.')
 
         tail_null = sum(self.distribution_null[votes_for_winner:])
+        #print("tail_null: "+str(tail_null))
         tail_reported = sum(self.distribution_reported_tally[votes_for_winner:])
+        #print("tail_reported: "+str(tail_reported))
 
         if verbose:
             click.echo('\np-value: {}'.format(tail_null / tail_reported))
         self.realized_risks.append(tail_null / tail_reported)
 
-        return self.alpha * tail_reported > tail_null
+        stop = self.alpha * tail_reported > tail_null
+        pvalue = tail_null / tail_reported
+        
+        return {
+            "stop": stop,
+            "pvalue": pvalue
+        }
 
     def next_min_winner_ballots(self, sample_size) -> int:
         """Compute kmin in interactive context."""

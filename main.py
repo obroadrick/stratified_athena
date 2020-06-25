@@ -36,7 +36,7 @@ print(audit3.min_winner_ballots)
 overall = Contest(150000, {
     'A': 28000+60000,
     'B': 22000+40000
-}, 1, ['a'], contesttype.plurality)
+}, 1, ['A'], ContestType.PLURALITY)
 
 strata = []
 strata.append(stratum1)
