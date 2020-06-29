@@ -129,17 +129,11 @@ class Audit_S(ABC):
         else:
             round_draw = self.rounds[-1] - self.rounds[-2]
 
-        # Nw is underlying winner count assumed under the null hypothesis
-        if (self.null_margin == 0):
-            # If null_margin is 0, assume half of total ballots (tie case)
-            Nw_exact = self.contest.contest_ballots / 2
-            Nw = math.floor(Nw_exact)
-        else:
-            # Otherwise Nw is the worst case (maximum possible value) under
-            #  the null hypothesis that the true margin is at most null_margin
-            Nw_exact = (self.contest.contest_ballots - self.null_margin) / 2
-            Nw = math.floor(Nw_exact)
-            print("underlying null dist winner votes: "+str(Nw))
+        # Compute the underlying number of winner votes under the null 
+        # (Note that if null_margin is 0, then this simplifies to a tie)
+        Nw_exact = (self.contest.contest_ballots + self.null_margin) / 2
+        Nw = math.floor(Nw_exact)
+        #print("x*: "+str(Nw))
 
         # Distribution updating is dependent on sampling with or without replacement
         if self.replacement:

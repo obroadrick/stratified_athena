@@ -151,9 +151,6 @@ def overall_stopping_condition(strata, overall_contest, sample, alpha):
 
 
 
-
-
-
     
 ##############################################
 #######      some actual testing!      #######
