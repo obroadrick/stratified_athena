@@ -53,8 +53,6 @@ def ballot_polling_sprt(sample, popsize, alpha, Vw, Vl,
     Un = n - Wn - Ln
     decision = "None"
 
-    #print("popsize: "+str(popsize)+"     sample size: "+str(len(sample))+"    winner_votes: "+str(Wn))
-
     # Set up likelihood for null and alternative hypotheses
     Vw = int(Vw)
     Vl = int(Vl)
@@ -134,7 +132,6 @@ def ballot_polling_sprt(sample, popsize, alpha, Vw, Vl,
         # reject the null and stop
         decision = 1
             
-    #print("pvalue: "+str(min(1, 1/LR)))
     return {'decision' : decision,
             'upper_threshold' : upper,
             'LR' : LR,

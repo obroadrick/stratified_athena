@@ -60,7 +60,7 @@ class Minerva_S(Audit_S):
             raise Exception('Attempted to call stopping condition without any rounds.')
 
         tail_null = sum(self.distribution_null[votes_for_winner:])
-        #print("tail_null: "+str(tail_null))
+        #print("tail_null (minerva_s): "+str(tail_null))
         tail_reported = sum(self.distribution_reported_tally[votes_for_winner:])
         #print("tail_reported: "+str(tail_reported))
 
