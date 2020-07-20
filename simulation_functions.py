@@ -11,8 +11,9 @@ import numpy.testing
 from contest import ContestType
 from contest import Contest
 from minerva_s import Minerva_S
-from fishers_combination import create_modulus, maximize_fisher_combined_pvalue
+from fishers_combination import create_modulus, maximize_fisher_combined_pvalue, calculate_lambda_range
 from scipy.stats import binom
+import math
 
 def simulate_fisher_combined_audits(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha,
     reps=10000, verbose=False, feasible_lambda_range=None, underlying=None):
@@ -79,6 +80,7 @@ def simulate_fisher_combined_audits(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha,
         sam = np.random.choice(pop2, n2, replace=True)
         samples.append(sam)
 
+    """
     # R2 BRAVO
     start = time.time()
     for i, sam in zip(range(len(samples)),samples):
@@ -129,7 +131,8 @@ def simulate_fisher_combined_audits(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha,
                                modulus=mod, \
                                feasible_lambda_range=feasible_lambda_range)['max_pvalue']
     minerva_time = time.time() - start
- 
+    """ 
+
     # Minerva (direct)
     start = time.time()
     for i, sam in zip(range(len(samples)),samples):
@@ -146,22 +149,22 @@ def simulate_fisher_combined_audits(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha,
                                modulus=mod, \
                                feasible_lambda_range=feasible_lambda_range)['max_pvalue']
     minerva_direct_time = time.time() - start
- 
+    """
+    "r2_bravo" : np.mean(fisher_pvalues_r2_bravo <= alpha),
+    "r2_bravo_time" : r2_bravo_time,
+    "r2_bravo_avg_pval" : np.mean(fisher_pvalues_r2_bravo),
+
+    "r2_bravo_direct" : np.mean(fisher_pvalues_r2_bravo_direct <= alpha),
+    "r2_bravo_direct_time" : r2_bravo_direct_time,
+    "r2_bravo_direct_avg_pval" : np.mean(fisher_pvalues_r2_bravo_direct),
+
+    "minerva" : np.mean(fisher_pvalues_minerva <= alpha),
+    "minerva_time" : minerva_time,
+    "minerva_avg_pval" : np.mean(fisher_pvalues_minerva),
+    """
     return  {
-                "r2_bravo" : np.mean(fisher_pvalues_r2_bravo <= alpha),
-                #"r2_bravo_time" : r2_bravo_time,
-                "r2_bravo_avg_pval" : np.mean(fisher_pvalues_r2_bravo),
-
-                "r2_bravo_direct" : np.mean(fisher_pvalues_r2_bravo_direct <= alpha),
-                #"r2_bravo_direct_time" : r2_bravo_direct_time,
-                "r2_bravo_direct_avg_pval" : np.mean(fisher_pvalues_r2_bravo_direct),
-
-                "minerva" : np.mean(fisher_pvalues_minerva <= alpha),
-                #"minerva_time" : minerva_time,
-                "minerva_avg_pval" : np.mean(fisher_pvalues_minerva),
-
                 "minerva_direct" : np.mean(fisher_pvalues_minerva_direct <= alpha),
-                #"minerva_direct_time" : minerva_direct_time,
+                "minerva_direct_time" : minerva_direct_time,
                 "minerva_direct_avg_pval" : np.mean(fisher_pvalues_minerva_direct)
             }
 
@@ -258,6 +261,62 @@ def r2_bravo_pvalue_direct(sample, popsize, alpha, Vw, Vl, null_margin):
     pvalue = null / alt
 
     return min([pvalue,1])
+
+def estimate_round_size_for_stopping_prob(prob, N_w1, N_l1, N_w2, N_l2, alpha, underlying=None):
+    """
+    Estimate the round size required to produce the desired stopping probability.
+
+    Parameters
+    ----------
+    N_w1 : int
+        votes for the reported winner in the ballot comparison stratum
+    N_l1 : int
+        votes for the reported loser in the ballot comparison stratum
+    N_w2 : int
+        votes for the reported winner in the ballot polling stratum
+    N_l2 : int
+        votes for the reported loser in the ballot polling stratum
+    alpha : float
+        risk limit
+    underlying : int
+        true count of votes for winner overall (default assumes alt)
+    
+    Returns
+    -------
+    dict : fractions of simulations where the the audits successfully
+    confirmed the election results
+    """
+    N1 = N_w1 + N_l1
+    N2 = N_w2 + N_l2
+    N = N1 + N2
+
+    # Binary search for sample size
+    left = 1
+    right = N / 8 # more than third seems excessive
+
+    tol = .01
+
+    while (1):
+        mid = (right + left) / 2
+        
+        # For now, just assume a 50-50 allocation between the strata (later can also search to maximize stopping prob for this allocation)
+        n1 = math.ceil(mid / 2)
+        n2 = math.floor(mid / 2)
+
+        # Simulate for this round size (and allocation) to obtain stopping probality (later can obtain and compare analytically)
+        reps = 50
+        results = simulate_fisher_combined_audits(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, reps=reps, feasible_lambda_range=calculate_lambda_range(N_w1, N_l1, N1, N_w2, N_l2, N2))
+        pr_stop = results['minerva']
+
+        print("round size: "+str(mid)+"   pr_stop: "+str(pr_stop))
+
+        if pr_stop < prob:
+            left = mid
+        elif pr_stop < prob + tol:
+            return mid
+        else:
+            right = mid
+
 
 
 
