@@ -1,7 +1,8 @@
 import numpy as np
-from simulation_functions import simulate_fisher_combined_audits
+from simulation_functions import simulate_fisher_combined_audits, compute_dist_over_pvalues
 from fishers_combination import calculate_lambda_range
 import math
+import matplotlib.pyplot as plt
 
 alpha = 0.1
 
@@ -39,13 +40,27 @@ margin = N_w1 + N_w2 - N_l1 - N_l2
 np.random.seed(18124328)
 
 n1 = 750 # same for all tests, same as in suite example
-n2 = 620
+n2 = 310
 
-reps = 3000
+results = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None)
 
-results = simulate_fisher_combined_audits(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, reps=reps, verbose=False, feasible_lambda_range=calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2), underlying=None)
+possible_winner_votes = results["possible_winner_votes"]
+dist_over_winner_votes = results["dist_over_winner_votes"]
+pvalues = results["pvalues"]
 
-print(results)
+index = -1
+# find the index of the first pvalue less than the risk limit
+for i,pvalue in zip(range(0, n2 + 1), pvalues):
+    if (pvalue <= alpha):
+        index = i
+        break
+prob_stop = sum(dist_over_winner_votes[index:])
 
+print("probability of getting less than .1 (alpha) pvalue " + str(prob_stop))
+
+plt.plot(possible_winner_votes,pvalues)
+plt.show()
+plt.plot(pvalues,dist_over_winner_votes)
+plt.show()
 
 
