@@ -182,5 +182,40 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
             return right
 
 
+def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, alpha, underlying=None):
+    """
+    Finds the first round size that achieves the passed stopping_probability
+    for a Minerva audit. 
+    """
+
+    N = N_w + N_l 
+
+    left = 1
+    right = N / 10
+     
+    while(1):
+        n = round((left + right) / 2 )
+
+        # compute the 1 - stopping_probability quantile of the alt dist
+        # kmax where pr[k >= kmax | alt] = stopping_probability
+        # floor because we need to ensure at least a stopping_probability prob of stopping
+        kmax = math.floor(binom.ppf(1 - stopping_probability, n, N_w / N))
+
+        # compute pvalue for this kmax
+        pvalue = minerva_pvalue_direct_count(winner_votes=kmax, n=n, popsize=N, alpha=alpha, Vw=N_w, Vl=N_l, null_margin=0)
+
+        # update binary search bounds
+        if (pvalue > alpha):
+            left = n
+        elif (pvalue <= alpha):
+            right = n
+ 
+        # when and right converge, right is the minimum round size that achieves stopping_probability
+        if (left == right - 1):
+            return right
+
+
+
+
 
 

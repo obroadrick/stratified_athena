@@ -2,7 +2,7 @@ import json
 import pprint
 import matplotlib.pyplot as plt
 
-with open('data.txt') as json_file:
+with open('data_eff.txt') as json_file:
     data = json.load(json_file)
     pprint.pprint(data)
 
@@ -25,7 +25,12 @@ for audit in data['audits']:
 
 plt.plot(N_2s, round_sizes, 'bo')
 plt.show()
+
+fig = plt.figure()
 plt.plot(percent_pollings, round_size_as_percents, 'bo')
+fig.suptitle('round size vs polling stratum size (as percentages)', fontsize=20)
+plt.xlabel('polling stratum as percent of relevant ballots', fontsize=20)
+plt.ylabel('round size as percent of stratum size', fontsize=20)
 plt.show()
     
 
