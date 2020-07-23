@@ -244,6 +244,7 @@ def minerva_pvalue_direct(sample, popsize, alpha, Vw, Vl, null_margin):
 def minerva_pvalue_direct_count(winner_votes, n, popsize, alpha, Vw, Vl, null_margin):
     """Computes the pvalue for a one-round minerva audit with the passed values.
     Makes computations directly (rather than with Grant's r2b2 Minerva code).
+    Uses the count of winner votes rather than the sample structure that SUITE uses.
 
     Parameters:
         sample : list of 1's (vote for winner) and 0's (vote for loser)
