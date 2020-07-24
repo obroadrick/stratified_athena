@@ -15,7 +15,7 @@ from fishers_combination import create_modulus, maximize_fisher_combined_pvalue,
 from scipy.stats import binom
 import math
 import matplotlib.pyplot as plt
-from simulation_functions import minerva_pvalue_direct_count
+from simulation_functions import minerva_pvalue_direct_count, r2bravo_pvalue_direct_count
 
 def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
     """
@@ -185,7 +185,7 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
 def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, alpha, underlying=None):
     """
     Finds the first round size that achieves the passed stopping_probability
-    for a Minerva audit. 
+    for a Minerva audit (with no stratification). 
     """
 
     N = N_w + N_l 
@@ -216,6 +216,58 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
 
 
 
+def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None):
+    """
+    This function will also compute minimum round size for the 
+    passed stopping probability, but it will do so much more 
+    efficiently. At each point in the search only one pvalue 
+    will be computed. Should have done it this way to begin with.
+    """
 
+    N_1 = N_w1 + N_l1
+    N_2 = N_w2 + N_l2
+    margin = N_w1 + N_w2 - N_l1 - N_l2
+
+    feasible_lambda_range=calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2)
+
+    left = 1
+    right = N_2 / 10
+     
+    while(1):
+        n2 = round((left + right) / 2 )
+
+        # compute the 1 - stopping_probability quantile of the alt dist
+        # kmax where pr[k >= kmax | alt] = stopping_probability
+        # floor because we need to ensure at least a stopping_probability prob of stopping
+        kmax = math.floor(binom.ppf(1 - stopping_probability, n2, N_w2 / N_2))
+
+        # compute pvalue for this kmax
+        cvr_pvalue = lambda alloc: ballot_comparison_pvalue(n=n1, gamma=1.03905, \
+                                       o1=0, u1=0, o2=0, u2=0,
+                                   reported_margin=margin, N=N_1,
+                                   null_lambda=alloc)
+
+        mod = create_modulus(n1, n2, kmax, n2 - kmax, N_1, margin, 1.03905)
+
+        nocvr_pvalue = lambda alloc: \
+            r2bravo_pvalue_direct_count(winner_votes=kmax, n=n2, popsize=N_2, alpha=alpha, \
+                                Vw=N_w2, Vl=N_l2, \
+                                null_margin=(N_w2-N_l2) - alloc*margin)
+
+        pvalue = maximize_fisher_combined_pvalue(N_w1, N_l1, \
+                               N_1, N_w2, N_l2, N_2, \
+                               pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
+                               modulus=mod, \
+                               feasible_lambda_range=feasible_lambda_range)['max_pvalue']
+        
+        # update binary search bounds
+        if (pvalue > alpha):
+            left = n2
+        elif (pvalue <= alpha):
+            right = n2
+ 
+        # when and right converge, right is the minimum round size that achieves stopping_probability
+        if (left == right - 1):
+            return right
 
 

@@ -465,6 +465,34 @@ def find_sample_size_for_stopping_prob(stopping_probability, N_w1, N_l1, N_w2, N
                 'one_lower_prob':left_pr_stop
             }
 
+def r2bravo_pvalue_direct_count(winner_votes, n, popsize, alpha, Vw, Vl, null_margin):
+    """Computes the pvalue for a one-round r2bravo audit with the passed values.
+    Uses the count of winner votes rather than the sample structure that SUITE uses.
+
+    Parameters:
+        sample : list of 1's (vote for winner) and 0's (vote for loser)
+        popsize : total ballots in stratum
+        alpha : risk limit
+        Vw : reported votes for winner in stratum
+        Vl : reported votes for loser in stratum
+        null_margin : the margin in votes assumed under the null
+
+    Returns:
+        float : the minerva pvalue
+    """
+    k = winner_votes
+    x = (popsize + null_margin) / 2
+
+    if x < k or popsize - x < n - k:
+        return 0
+
+    alt_pr = binom.pmf(k, n, Vw / popsize)
+    null_pr = binom.pmf(k, n, x / popsize)
+
+    pvalue = null_pr / alt_pr
+
+    return min([pvalue,1])
+
 
 
 

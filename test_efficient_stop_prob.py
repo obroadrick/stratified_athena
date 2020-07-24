@@ -1,6 +1,6 @@
 import numpy as np
 from simulation_functions import simulate_fisher_combined_audits
-from round_sizes import compute_dist_over_pvalues, find_sample_size_for_stopping_prob, find_sample_size_for_stopping_prob_efficiently
+from round_sizes import compute_dist_over_pvalues, find_sample_size_for_stopping_prob, find_sample_size_for_stopping_prob_efficiently, find_sample_size_for_stopping_prob_efficiently_r2bravo
 from fishers_combination import calculate_lambda_range
 import math
 import matplotlib.pyplot as plt
@@ -10,8 +10,6 @@ import json
 data = {}
 data['audits'] = []
 
-start = time.time()
-round_sizes = []
 for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65]:
     print("percent_polling: "+str(percent_polling))
     alpha = 0.1
@@ -52,11 +50,12 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65]:
 
     stopping_probability = .9
 
-    round_size = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
-    print ("round_size: "+str(round_size))
- 
-    round_sizes.append(round_size)
+    minerva_round_size = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    print ("minerva_round_size: "+str(minerva_round_size))
 
+    r2bravo_round_size = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    print ("r2bravo_round_size: "+str(r2bravo_round_size))
+ 
     data['audits'].append({
         'percent_polling':percent_polling,
         'N_relevant':N_relevant,
@@ -68,11 +67,12 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65]:
         'N_l1':N_l1,
         'N_w2':N_w2,
         'N_l2':N_l2,
-        'round_size':round_size
+        'minerva_round_size':minerva_round_size,
+        'r2bravo_round_size':r2bravo_round_size
     })
 
     #update the file each time (hopefully will write over?
-    with open('data_eff.txt', 'w') as outfile:
+    with open('data_with_r2bravo.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 
