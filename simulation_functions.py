@@ -207,7 +207,7 @@ def minerva_pvalue(sample, popsize, alpha, Vw, Vl, null_margin):
 
     pvalue = audit.stopping_condition(k)['pvalue']
 
-    return min([pvalue,1])
+    return min(pvalue)
 
 def minerva_pvalue_direct(sample, popsize, alpha, Vw, Vl, null_margin):
     """Computes the pvalue for a one-round minerva audit with the passed values.
@@ -239,7 +239,7 @@ def minerva_pvalue_direct(sample, popsize, alpha, Vw, Vl, null_margin):
 
     pvalue = null_tail / alt_tail
 
-    return min([pvalue,1])
+    return pvalue
 
 def minerva_pvalue_direct_count(winner_votes, n, popsize, alpha, Vw, Vl, null_margin):
     """Computes the pvalue for a one-round minerva audit with the passed values.
@@ -271,7 +271,7 @@ def minerva_pvalue_direct_count(winner_votes, n, popsize, alpha, Vw, Vl, null_ma
 
     pvalue = null_tail / alt_tail
 
-    return min([pvalue,1])
+    return pvalue
 
 
 def r2_bravo_pvalue_direct(sample, popsize, alpha, Vw, Vl, null_margin):
@@ -300,7 +300,7 @@ def r2_bravo_pvalue_direct(sample, popsize, alpha, Vw, Vl, null_margin):
 
     pvalue = null / alt
 
-    return min([pvalue,1])
+    return pvalue
 
 def estimate_round_size_for_stopping_prob(prob, N_w1, N_l1, N_w2, N_l2, alpha, underlying=None):
     """

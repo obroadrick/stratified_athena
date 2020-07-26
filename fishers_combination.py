@@ -163,18 +163,26 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
         stepsize = (lambda_upper + 1 - lambda_lower)/5
         test_lambdas = np.arange(lambda_lower, lambda_upper+stepsize, stepsize)
     fisher_pvalues = np.empty_like(test_lambdas)
+    pvalue1s = np.empty_like(test_lambdas)
+    pvalue2s = np.empty_like(test_lambdas)
     for i in range(len(test_lambdas)):
         pvalue1 = np.min([1, pvalue_funs[0](test_lambdas[i])])
+        pvalue1s[i] = pvalue1
         pvalue2 = np.min([1, pvalue_funs[1](1-test_lambdas[i])])
+        pvalue2s[i] = pvalue2
         fisher_pvalues[i] = fisher_combined_pvalue([pvalue1, pvalue2])
         
     pvalue = np.max(fisher_pvalues)
     alloc_lambda = test_lambdas[np.argmax(fisher_pvalues)]
+    pvalue1 = pvalue1s[np.argmax(fisher_pvalues)]
+    pvalue2 = pvalue2s[np.argmax(fisher_pvalues)]
     
     # If p-value is over the risk limit, then there's no need to refine the
     # maximization. We have a lower bound on the maximum.
     if pvalue > alpha or modulus is None:
         return {'max_pvalue' : pvalue,
+                'pvalue1' : pvalue1,
+                'pvalue2' : pvalue2,
                 'min_chisq' : sp.stats.chi2.ppf(1 - pvalue, df=4),
                 'allocation lambda' : alloc_lambda,
                 'tol' : None,
@@ -191,6 +199,8 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
 
     if mod <= dist:
         return {'max_pvalue' : pvalue,
+                'pvalue1' : pvalue1,
+                'pvalue2' : pvalue2,
                 'min_chisq' : fisher_fun_obs,
                 'allocation lambda' : alloc_lambda,
                 'stepsize' : stepsize,

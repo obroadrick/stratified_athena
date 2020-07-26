@@ -11,7 +11,7 @@ data = {}
 data['audits'] = []
 
 for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65]:
-    print("percent_polling: "+str(percent_polling))
+    print("\npercent_polling: "+str(percent_polling))
     alpha = 0.1
 
     # overall numbers (same as suite example 1)
@@ -50,12 +50,21 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65]:
 
     stopping_probability = .9
 
-    minerva_round_size = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
-    print ("minerva_round_size: "+str(minerva_round_size))
+    minerva_results = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    print ("minerva_round_size: "+str(minerva_results['round_size']))
+    print("combined_pvalue: "+str(minerva_results['combined_pvalue']))
+    print("comparison pvalue: "+str(minerva_results['comparison_pvalue']))
+    print("polling pvalue: "+str(minerva_results['polling_pvalue']))
+    print("alloc_lambda: "+str(minerva_results['alloc_lambda']))
 
-    r2bravo_round_size = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
-    print ("r2bravo_round_size: "+str(r2bravo_round_size))
- 
+    r2bravo_results = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    print ("r2bravo_round_size: "+str(r2bravo_results['round_size']))
+    print("combined_pvalue: "+str(r2bravo_results['combined_pvalue']))
+    print("comparison pvalue: "+str(r2bravo_results['comparison_pvalue']))
+    print("polling pvalue: "+str(r2bravo_results['polling_pvalue']))
+    print("alloc_lambda: "+str(r2bravo_results['alloc_lambda']))
+
+
     data['audits'].append({
         'percent_polling':percent_polling,
         'N_relevant':N_relevant,
@@ -67,12 +76,20 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65]:
         'N_l1':N_l1,
         'N_w2':N_w2,
         'N_l2':N_l2,
-        'minerva_round_size':minerva_round_size,
-        'r2bravo_round_size':r2bravo_round_size
+        'minerva_round_size':minerva_results['round_size'],
+        'minerva_combined_pvalue':minerva_results['combined_pvalue'],
+        'minerva_comparison_pvalue':minerva_results['comparison_pvalue'],
+        'minerva_polling_pvalue':minerva_results['polling_pvalue'],
+        'minerva_alloc_lambda':minerva_results['alloc_lambda'],
+        'r2bravo_round_size':r2bravo_results['round_size'],
+        'r2bravo_combined_pvalue':r2bravo_results['combined_pvalue'],
+        'r2bravo_comparison_pvalue':r2bravo_results['comparison_pvalue'],
+        'r2bravo_polling_pvalue':r2bravo_results['polling_pvalue'],
+        'r2bravo_alloc_lambda':r2bravo_results['alloc_lambda']
     })
 
     #update the file each time (hopefully will write over?
-    with open('data_with_r2bravo_backup.txt', 'w') as outfile:
+    with open('data_with_r2bravo_1.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 

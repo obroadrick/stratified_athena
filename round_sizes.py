@@ -133,6 +133,8 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
     passed stopping probability, but it will do so much more 
     efficiently. At each point in the search only one pvalue 
     will be computed. Should have done it this way to begin with.
+
+    Uses Minerva for the ballot polling stratum.
     """
 
     N_1 = N_w1 + N_l1
@@ -165,12 +167,16 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
                                 Vw=N_w2, Vl=N_l2, \
                                 null_margin=(N_w2-N_l2) - alloc*margin)
 
-        pvalue = maximize_fisher_combined_pvalue(N_w1, N_l1, \
+        combination_results = maximize_fisher_combined_pvalue(N_w1, N_l1, \
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                modulus=mod, \
-                               feasible_lambda_range=feasible_lambda_range)['max_pvalue']
-        
+                               feasible_lambda_range=feasible_lambda_range)
+        pvalue = combination_results['max_pvalue']
+        pvalue_comparison = combination_results['pvalue1']
+        pvalue_polling = combination_results['pvalue2']
+        alloc_lambda = combination_results['allocation lambda']
+       
         # update binary search bounds
         if (pvalue > alpha):
             left = n2
@@ -179,7 +185,13 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1):
-            return right
+            return  {
+                        "round_size":right,
+                        "combined_pvalue":pvalue,
+                        "comparison_pvalue":pvalue_comparison,
+                        "polling_pvalue":pvalue_polling,
+                        "alloc_lambda":alloc_lambda
+                    }
 
 
 def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, alpha, underlying=None):
@@ -254,11 +266,17 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
                                 Vw=N_w2, Vl=N_l2, \
                                 null_margin=(N_w2-N_l2) - alloc*margin)
 
-        pvalue = maximize_fisher_combined_pvalue(N_w1, N_l1, \
+        combination_results = maximize_fisher_combined_pvalue(N_w1, N_l1, \
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                modulus=mod, \
-                               feasible_lambda_range=feasible_lambda_range)['max_pvalue']
+                               feasible_lambda_range=feasible_lambda_range)
+
+        pvalue = combination_results['max_pvalue']
+        pvalue_comparison = combination_results['pvalue1']
+        pvalue_polling = combination_results['pvalue2']
+        alloc_lambda = combination_results['allocation lambda']
+
         
         # update binary search bounds
         if (pvalue > alpha):
@@ -268,6 +286,13 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1):
-            return right
+            return  {
+                        "round_size":right,
+                        "combined_pvalue":pvalue,
+                        "comparison_pvalue":pvalue_comparison,
+                        "polling_pvalue":pvalue_polling,
+                        "alloc_lambda":alloc_lambda
+                    }
+
 
 
