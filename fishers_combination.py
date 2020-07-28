@@ -173,9 +173,10 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
         fisher_pvalues[i] = fisher_combined_pvalue([pvalue1, pvalue2])
         
     pvalue = np.max(fisher_pvalues)
-    alloc_lambda = test_lambdas[np.argmax(fisher_pvalues)]
-    pvalue1 = pvalue1s[np.argmax(fisher_pvalues)]
-    pvalue2 = pvalue2s[np.argmax(fisher_pvalues)]
+    max_index = np.argmax(fisher_pvalues)
+    alloc_lambda = test_lambdas[max_index]
+    pvalue1 = pvalue1s[max_index]
+    pvalue2 = pvalue2s[max_index]
     
     # If p-value is over the risk limit, then there's no need to refine the
     # maximization. We have a lower bound on the maximum.

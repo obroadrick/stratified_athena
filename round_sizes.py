@@ -50,7 +50,7 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
         pvalue = maximize_fisher_combined_pvalue(N_w1, N_l1, \
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
-                               modulus=mod, \
+                               modulus=mod, alpha=alpha, \
                                feasible_lambda_range=feasible_lambda_range)['max_pvalue']
 
         pvalues.append(pvalue)
@@ -84,49 +84,6 @@ def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlyi
 
     return prob_stop
 
-def find_sample_size_for_stopping_prob(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None):
-    """
-    Hopefully will find the minimum sample size for the ballot polling stratum
-    which will achieve the passed stopping_probability.
-    """
-    start = time.time()
-
-    N_1 = N_w1 + N_l1
-    N_2 = N_w2 + N_l2
-     
-    left = 1
-    right = N_2 / 8
-    while(1):
-        # current value to test
-        n2 = math.ceil((left + right) / 2)
-
-        # analytically compute the stopping probability
-        stop = compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None)
-
-        # print results for fun
-        #print("n2: "+str(n2)+"  pr_stop: "+str(stop))
-
-        # update binary search bounds
-        if (stop < stopping_probability):
-            left = n2
-        elif (stop > stopping_probability):
-            right = n2
-        
-        # the left and right bounds should slowly converge,
-        # eventually leaving the left bound one less than the right
-        # in this case the right bound is the desired value
-        if (left == right - 1):
-            right_pr_stop = compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, right, alpha, underlying=None)
-            print("n2: "+str(right)+"  pr_stop: "+str(right_pr_stop)+"  took: "+str((time.time()-start)/60)+" minutes")
-            left_pr_stop = compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, left, alpha, underlying=None)
-            print("one lower for confirmation: n2: "+str(left)+"  pr_stop: "+str(left_pr_stop))
-            return {
-                'round_size':right,
-                'stopping_prob':right_pr_stop,
-                'one_lower':left,
-                'one_lower_prob':left_pr_stop
-            }
-
 def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None):
     """
     This function will also compute minimum round size for the 
@@ -141,13 +98,13 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
     N_2 = N_w2 + N_l2
     margin = N_w1 + N_w2 - N_l1 - N_l2
 
-    feasible_lambda_range=calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2)
+    feasible_lambda_range = calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2)
 
     left = 1
-    right = N_2 / 10
+    right = round(N_2 / 2)
      
     while(1):
-        n2 = round((left + right) / 2 )
+        n2 = math.ceil((left + right) / 2 )
 
         # compute the 1 - stopping_probability quantile of the alt dist
         # kmax where pr[k >= kmax | alt] = stopping_probability
@@ -170,7 +127,7 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
         combination_results = maximize_fisher_combined_pvalue(N_w1, N_l1, \
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
-                               modulus=mod, \
+                               modulus=mod, alpha=alpha, \
                                feasible_lambda_range=feasible_lambda_range)
         pvalue = combination_results['max_pvalue']
         pvalue_comparison = combination_results['pvalue1']
@@ -184,7 +141,10 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
             right = n2
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
-        if (left == right - 1):
+        if (left == right - 1 and n2 == right):
+            if (right == round(N_2 / 3)):
+                print("more than one third of the stratum votes are required")
+            print(combination_results['refined'])
             return  {
                         "round_size":right,
                         "combined_pvalue":pvalue,
@@ -203,10 +163,10 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
     N = N_w + N_l 
 
     left = 1
-    right = N / 10
+    right = round(N / 2)
      
     while(1):
-        n = round((left + right) / 2 )
+        n = math.ceil((left + right) / 2)
 
         # compute the 1 - stopping_probability quantile of the alt dist
         # kmax where pr[k >= kmax | alt] = stopping_probability
@@ -224,6 +184,8 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1):
+            if (right == round(N / 2)):
+                print("more than one third of the stratum votes are required")
             return right
 
 
@@ -243,10 +205,10 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
     feasible_lambda_range=calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2)
 
     left = 1
-    right = N_2 / 10
+    right = round(N_2 / 2)
      
     while(1):
-        n2 = round((left + right) / 2 )
+        n2 = math.ceil((left + right) / 2)
 
         # compute the 1 - stopping_probability quantile of the alt dist
         # kmax where pr[k >= kmax | alt] = stopping_probability
@@ -269,7 +231,7 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
         combination_results = maximize_fisher_combined_pvalue(N_w1, N_l1, \
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
-                               modulus=mod, \
+                               modulus=mod, alpha=alpha, \
                                feasible_lambda_range=feasible_lambda_range)
 
         pvalue = combination_results['max_pvalue']
@@ -285,7 +247,9 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
             right = n2
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
-        if (left == right - 1):
+        if (left == right - 1 and n2 == right):
+            if (right == round(N_2 / 3)):
+                print("more than one third of the stratum votes are required")
             return  {
                         "round_size":right,
                         "combined_pvalue":pvalue,

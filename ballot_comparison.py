@@ -46,7 +46,7 @@ def ballot_comparison_pvalue(n, gamma, o1, u1, o2, u2, reported_margin, N, null_
                     u1*np.log(1 + 1/(2*gamma)) - \
                     u2*np.log(1 + 1/gamma)
     pvalue = np.exp(log_pvalue)
-    return np.min([pvalue, 1])
+    return pvalue
 
 
 def findNmin_ballot_comparison(alpha, gamma, o1, u1, o2, u2,

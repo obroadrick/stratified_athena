@@ -1,6 +1,6 @@
 import numpy as np
 from simulation_functions import simulate_fisher_combined_audits
-from round_sizes import compute_dist_over_pvalues, find_sample_size_for_stopping_prob, find_sample_size_for_stopping_prob_efficiently, find_sample_size_for_stopping_prob_minerva
+from round_sizes import compute_dist_over_pvalues, find_sample_size_for_stopping_prob_efficiently, find_sample_size_for_stopping_prob_minerva
 from fishers_combination import calculate_lambda_range
 import math
 import matplotlib.pyplot as plt
