@@ -46,7 +46,7 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
 
     np.random.seed(18124328)
 
-    n1 = 750 # same for all tests, same as in suite example
+    n1 = 1500 # same for all tests, same as in suite example
 
     stopping_probability = .9
 
@@ -89,7 +89,7 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
     })
 
     #update the file each time (hopefully will write over?
-    with open('data/data_with_r2bravo_3.txt', 'w') as outfile:
+    with open('data/data_double_comparisons.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 

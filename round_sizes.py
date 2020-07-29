@@ -4,7 +4,6 @@ import scipy as sp
 import scipy.stats
 import scipy.optimize
 from ballot_comparison import ballot_comparison_pvalue
-from hypergeometric import trihypergeometric_optim
 from sprt import ballot_polling_sprt
 import matplotlib.pyplot as plt
 import numpy.testing
@@ -15,7 +14,7 @@ from fishers_combination import create_modulus, maximize_fisher_combined_pvalue,
 from scipy.stats import binom
 import math
 import matplotlib.pyplot as plt
-from simulation_functions import minerva_pvalue_direct_count, r2bravo_pvalue_direct_count
+from simulations import minerva_pvalue_direct_count, r2bravo_pvalue_direct_count
 
 def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
     """

@@ -18,6 +18,9 @@ Ballot comparison file from SUITE.
 ### contest.py
 Contest file from r2b2.
 
+### contest_wide_round_size_script.py
+Script for computing and storing the round size for contest-wide ballot polling audits with no stratification (both Minerva and R2 Bravo).
+
 ### data
 Directory with json files containing results from various tests, simulations, and computations of round sizes.
 
@@ -36,9 +39,6 @@ Fishers combination functions from SUITE.
 ### hypergeometric.py
 Hypergeometric functions from SUITE. (Not used?)
 
-### minerva_round_size_script.py
-Script that computes the round size for a contest-wide Minerva audit with no stratification.
-
 ### minerva_s.py
 Minerva file from r2b2 modified to handle a null hypothesis with nonzero margin.
 
@@ -53,9 +53,6 @@ Incomplete script that creates a plot of the probability distribution over pvalu
 
 ### __pycache__
 This is a python thing.
-
-### r2bravo_round_size_script.py
-Script that computes the round size for a contest-wide R2 Bravo audit with no stratification.
 
 ### README.md
 This file.

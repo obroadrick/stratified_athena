@@ -4,7 +4,8 @@
       "N_relevant": 104000,
       "N_w": 53000,
       "N_l": 51000,
-      "round_size": 18677
+      "minerva_round_size": 18677,
+      "r2bravo_round_size": 38577
     }
   ]
 }
