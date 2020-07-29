@@ -1,19 +1,22 @@
+"""
+This script is used to plot the first round sizes for stratified audits using both
+Minerva and R2 Bravo in the polling stratum for different polling stratum sizes.
+It also includes the first round sizes for contest-wide audits, both Minerva
+and R2 Bravo. 
+
+Oliver Broadrick 2020
+"""
+
 import json
 import pprint
 import matplotlib.pyplot as plt
 
-with open('data_with_r2bravo_3.txt') as json_file:
+# open desired stratified data json file
+with open('data/data_stratified.txt') as json_file:
     data = json.load(json_file)
     #pprint.pprint(data)
 
-with open('data_minerva.txt') as json_file:
-    minerva_data = json.load(json_file)
-    #pprint.pprint(data)
-
-with open('data_r2bravo.txt') as json_file:
-    r2bravo_data = json.load(json_file)
-    #pprint.pprint(data)
-
+# go through the stratified file and get desired data
 N_2s = []
 minerva_round_sizes = []
 r2bravo_round_sizes = []
@@ -31,9 +34,16 @@ for audit in data['audits']:
     minerva_round_sizes.append(minerva_round_size)
     r2bravo_round_sizes.append(r2bravo_round_size)
 
-minerva_round_size_no_stratification = minerva_data['audits'][0]['round_size']
-r2bravo_round_size_no_stratification = r2bravo_data['audits'][0]['round_size']
+# open the contest-wide data
+with open('data/data_contest_wide.txt') as json_file:
+    contest_wide_data = json.load(json_file)
+    #pprint.pprint(data)
 
+# obtain desired contest-wide data
+minerva_round_size_no_stratification = contest_wide_data['audits'][0]['minerva_round_size']
+r2bravo_round_size_no_stratification = contest_wide_data['audits'][0]['r2bravo_round_size']
+
+# make a pretty plot of the data
 fig = plt.figure(figsize=(20,10))
 fig.suptitle('Round Sizes for Varying Polling Stratum Sizes (for margin: '+str(overall_margin)+')', fontsize=20)
 ax = fig.add_subplot(111)#numrows, numcols, num of subplot being referenced
