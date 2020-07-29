@@ -89,7 +89,7 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
     })
 
     #update the file each time (hopefully will write over?
-    with open('data_with_r2bravo_3.txt', 'w') as outfile:
+    with open('data/data_with_r2bravo_3.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 

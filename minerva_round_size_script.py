@@ -32,7 +32,7 @@ data['audits'].append({
 })
 
 #update the file each time (hopefully will write over?
-with open('data_minerva.txt', 'w') as outfile:
+with open('data/data_minerva.txt', 'w') as outfile:
     json.dump(data, outfile, indent=2)
 
 
