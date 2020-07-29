@@ -4,7 +4,7 @@ This code is messy and ugly. Slowly working towards things making more sense, bu
 
 A lot of this code is pulled straight from [the SUITE work](https://github.com/pbstark/CORLA18/tree/master/code) and a few files are pulled from [the minerva branch of r2b2](https://github.com/gwexploratoryaudits/r2b2/tree/minerva).
 
-All current work is on [the s2 branch of this repo](https://github.com/obroadrick/stratified_athena/tree/s2), s2 meaning 2 strata (CVR and no-CVR).
+All work has been consolidated to master branch.
 
 Please ask me any questions that come up.
 
@@ -63,7 +63,7 @@ This file.
 ### round_sizes.py
 Functions for computing a first round size which accomplishes a given probability of stopping under the alternative hypothesis, that the election is truly as announced.
 
-### simulation_functions.py
+### simulations.py
 Functions for simulating stratified audits. Also includes my own functions for computing the pvalue for one-round Minerva audits and R2 Bravo audits.
 
 ### simulation_script.py
