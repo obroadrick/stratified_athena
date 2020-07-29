@@ -29,17 +29,6 @@ for audit in data['audits']:
 
 minerva_round_size_no_stratification = minerva_data['audits'][0]['round_size']
 
-fig = plt.figure(figsize=(20,10))
-fig.suptitle('Round Sizes for Varying Polling Stratum Sizes (for margin: '+str(overall_margin)+')', fontsize=20)
-ax = fig.add_subplot(111)#numrows, numcols, num of subplot being referenced
-ax.scatter(percent_pollings, minerva_round_sizes, color='b', marker='o', label='Minerva')
-ax.scatter(percent_pollings, r2bravo_round_sizes, color='r', marker='x', label='R2 Bravo')
-ax.set_xlabel('Polling Stratum Size (as percent of relevant ballots)', fontsize=20)
-ax.set_ylabel('First Round Size (90% stopping probability)', fontsize=20)
-plt.axhline(minerva_round_size_no_stratification, 0, 1, label='Minerva Audit without Stratification', linestyle='dashed')
-plt.legend(loc='upper left', fontsize=20)
-plt.setp(ax.get_xticklabels(), fontsize=18)
-plt.setp(ax.get_yticklabels(), fontsize=18)
-plt.show()
-
+for i,j,k in zip(minerva_round_sizes, r2bravo_round_sizes, percent_pollings):
+    print(str(k)+": "+str(i)+" "+str(j))
 

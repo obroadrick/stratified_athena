@@ -188,6 +188,39 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
                 print("more than one third of the stratum votes are required")
             return right
 
+def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, alpha, underlying=None):
+    """
+    Finds the first round size that achieves the passed stopping_probability
+    for an R2 Bravo audit (with no stratification). 
+    """
+
+    N = N_w + N_l 
+
+    left = 1
+    right = round(N / 2)
+     
+    while(1):
+        n = math.ceil((left + right) / 2)
+
+        # compute the 1 - stopping_probability quantile of the alt dist
+        # kmax where pr[k >= kmax | alt] = stopping_probability
+        # floor because we need to ensure at least a stopping_probability prob of stopping
+        kmax = math.floor(binom.ppf(1 - stopping_probability, n, N_w / N))
+
+        # compute pvalue for this kmax
+        pvalue = r2bravo_pvalue_direct_count(winner_votes=kmax, n=n, popsize=N, alpha=alpha, Vw=N_w, Vl=N_l, null_margin=0)
+
+        # update binary search bounds
+        if (pvalue > alpha):
+            left = n
+        elif (pvalue <= alpha):
+            right = n
+ 
+        # when and right converge, right is the minimum round size that achieves stopping_probability
+        if (left == right - 1):
+            if (right == round(N / 2)):
+                print("more than one third of the stratum votes are required")
+            return right
 
 
 def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None):
