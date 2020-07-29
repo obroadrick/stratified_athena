@@ -9,9 +9,69 @@ All current work is on [the s2 branch of this repo](https://github.com/obroadric
 Please ask me any questions that come up.
 
 # files
-## simulation_functions.py
-This file has functions that can be used to run simulations of audits. This is a main focus right now.
-## minerva_s.py and audit_s.py 
-These files are adapted from the minerva branch of r2b2 (Grant's code) to handle null-margins, a concept unique to stratified audits.
-## main_tests.py
-This is the script that runs simulations. I change this frequently for whatever I'm currently testing.
+### audit_s.py
+Audit class from r2b2, modified to handle null hypotheses of any margin. 
+
+###ballot_comparison.py
+Ballot comparison file from SUITE.
+
+###contest.py
+Contest file from r2b2.
+
+###data
+Directory with json files containing results from various tests, simulations, and computations of round sizes.
+
+###dist_pvalues.py
+Incomplete script for creating a plot of the probability distribution over possible pvalues for a stratified audit.
+
+###easy_read.py
+Simple script for printing data from the json data files.
+
+###election.py
+Election file from r2b2.
+
+###fishers_combination.py
+Fishers combination functions from SUITE.
+
+###hypergeometric.py
+Hypergeometric functions from SUITE. (Not used?)
+
+###minerva_round_size_script.py
+Script that computes the round size for a contest-wide Minerva audit with no stratification.
+
+###minerva_s.py
+Minerva file from r2b2 modified to handle a null hypothesis with nonzero margin.
+
+###old
+Some files that are no longer used from when I first started exploring this topic, including some functions (incomplete) for more than two strata.
+
+###process_data.py
+Script that produces a plot of round sizes from the json data files.
+
+###pvalue_dist_script.py
+Incomplete script that creates a plot of the probability distribution over pvalues for a stratified audit.
+
+###__pycache__
+This is a python thing.
+
+###r2bravo_round_size_script.py
+Script that computes the round size for a contest-wide R2 Bravo audit with no stratification.
+
+###README.md
+This file.
+
+###round_sizes.py
+Functions for computing a first round size which accomplishes a given probability of stopping under the alternative hypothesis, that the election is truly as announced.
+
+###simulation_functions.py
+Functions for simulating stratified audits. Also includes my own functions for computing the pvalue for one-round Minerva audits and R2 Bravo audits.
+
+###simulation_script.py
+Script for running simulations of stratified audits.
+
+###sprt.py
+Functions for R2 Bravo from SUITE.
+
+###stratified_round_size_script.py
+Script to compute the round size which accomplishes a given probability of stopping for various one-round stratified audits.
+
