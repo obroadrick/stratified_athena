@@ -16,7 +16,7 @@ Here is a plot illustrating the method I use to find the polling stratum round s
 
 ![Round Size Visualization Plot](imgs/round_size_visualization.png)
 
-From the plot, you can tell that this round size of 77 achieves a 90% probability of stopping because the value kmax such that Pr[k>=kmax | H_a] >= .9 and the pvalue corresponding to kmax is less than or equal to alpha (.1).
+From the plot, you can tell that this round size of 84 achieves a 90% probability of stopping because the value kmax such that Pr[k>=kmax | H_a] >= .9 and the pvalue corresponding to kmax is less than or equal to alpha (.1).
 
 ## Polling stratum round sizes 
 
