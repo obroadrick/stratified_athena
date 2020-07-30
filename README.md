@@ -45,7 +45,7 @@ Minerva file from r2b2 modified to handle a null hypothesis with nonzero margin.
 ### old
 Some files that are no longer used from when I first started exploring this topic, including some functions (incomplete) for more than two strata.
 
-### process_data.py
+### plot_data.py
 Script that produces a plot of round sizes from the json data files.
 
 ### pvalue_dist_script.py

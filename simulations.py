@@ -247,7 +247,7 @@ def minerva_pvalue_direct_count(winner_votes, n, popsize, alpha, Vw, Vl, null_ma
     Uses the count of winner votes rather than the sample structure that SUITE uses.
 
     Parameters:
-        sample : list of 1's (vote for winner) and 0's (vote for loser)
+        winner_votes : number of votes for the winner in the sample (rest for loser)
         popsize : total ballots in stratum
         alpha : risk limit
         Vw : reported votes for winner in stratum

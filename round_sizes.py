@@ -173,7 +173,7 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
         kmax = math.floor(binom.ppf(1 - stopping_probability, n, N_w / N))
 
         # compute pvalue for this kmax
-        pvalue = minerva_pvalue_direct_count(winner_votes=kmax, n=n, popsize=N, alpha=alpha, Vw=N_w, Vl=N_l, null_margin=0)
+        pvalue = minerva_pvalue_direct_count(winner_votes=kmax, n=n, popsize=N, alpha=alpha, Vw=N_w, Vl=N_l, null_margin=1000)
 
         # update binary search bounds
         if (pvalue > alpha):

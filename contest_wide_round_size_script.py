@@ -37,6 +37,6 @@ data['audits'].append({
 })
 
 #update the file each time (hopefully will write over?
-with open('data/data_contest_wide_audits.txt', 'w') as outfile:
+with open('data/data_contest_wide_audits_sanity.txt', 'w') as outfile:
     json.dump(data, outfile, indent=2)
 
