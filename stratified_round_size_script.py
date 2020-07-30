@@ -13,8 +13,8 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
     alpha = 0.1
 
     # overall relevant ballot tallies (same as suite example 1)
-    N_w = 64000
-    N_l = 40000
+    N_w = 55000
+    N_l = 104000 - N_w
     N_relevant = N_w + N_l
     N_w_fraction = N_w / N_relevant
 
@@ -93,7 +93,7 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
     })
 
     # update the file each loop (for convenience of checking progress)
-    with open('data/data_stratified_larger_margin.txt', 'w') as outfile:
+    with open('data/data_stratified_intermediate_margin.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 

@@ -1,0 +1,11 @@
+{
+  "audits": [
+    {
+      "N_relevant": 104000,
+      "N_w": 55000,
+      "N_l": 49000,
+      "minerva_round_size": 3020,
+      "r2bravo_round_size": 4315
+    }
+  ]
+}

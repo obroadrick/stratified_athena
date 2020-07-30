@@ -1,14 +1,20 @@
 # stratified_athena
 
-This code is messy and ugly. Slowly working towards things making more sense, but for now I more focused on getting things working and producing meaningful results, less focused on code ready to be integrated into r2b2....
+This repository is my exploratory work on stratified audits, under Professor Vora. Specifically I'm working on 2-strata audits that make use of the Athena class of ballot polling audits for the ballot polling stratum in order to increase the efficiency (and therefore feasability) of stratified audits.
 
-A lot of this code is pulled straight from [the SUITE work](https://github.com/pbstark/CORLA18/tree/master/code) and a few files are pulled from [the minerva branch of r2b2](https://github.com/gwexploratoryaudits/r2b2/tree/minerva).
+A lot of this code is pulled straight from [the SUITE work](https://github.com/pbstark/CORLA18/tree/master/code) and some is pulled from [the minerva branch of r2b2](https://github.com/gwexploratoryaudits/r2b2/tree/minerva).
 
-All work has been consolidated to master branch.
+This code is messy and ugly. For now I more focused on getting things working and producing meaningful results, less focused on code ready to be integrated into r2b2....
 
-Please ask me any questions that come up.
+Please ask me any questions that come up. obroadrick@gwu.edu
 
-# files
+# Examples
+
+Here is a plot of the ballot polling stratum minimum first round sizes that achieve 90% stopping probability for a 2-strata audit with ~2% margin, a fixed 750 ballots sampled in the comparison stratum, and various stratum sizes (on x-axis as percantage of total relevant ballots). Note that the 2-strata audit can reduce the number of ballots polled if a contest-wide polling audit were performed for significant polling stratum sizes. A tighter margin reduces the polling stratum size that still yields gains in efficiency, but even for this relatively tight race (~2% margin) more than half the relevant ballots can be in the polling stratum and still reduce the polling round size.
+
+![Round Size Plot](imgs/stratified_plot.png)
+
+# Files in this repo (updated periodically)
 ###  audit_s.py
 Audit class from r2b2, modified to handle null hypotheses of any margin. 
 
