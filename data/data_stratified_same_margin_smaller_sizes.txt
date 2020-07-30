@@ -1,0 +1,48 @@
+{
+  "audits": [
+    {
+      "percent_polling": 0.05,
+      "N_relevant": 10400,
+      "N_w": 5300,
+      "N_l": 5100,
+      "N_2": 520,
+      "N_1": 9880,
+      "N_w1": 5035,
+      "N_l1": 4845,
+      "N_w2": 265,
+      "N_l2": 255,
+      "minerva_round_size": 75,
+      "minerva_combined_pvalue": 0.09411840747117317,
+      "minerva_comparison_pvalue": 1.0,
+      "minerva_polling_pvalue": 0.018953436690807415,
+      "minerva_alloc_lambda": 1.646672707043828e-15,
+      "r2bravo_round_size": 117,
+      "r2bravo_combined_pvalue": 0.09638890331255023,
+      "r2bravo_comparison_pvalue": 1.0,
+      "r2bravo_polling_pvalue": 0.01952813516625055,
+      "r2bravo_alloc_lambda": 1.6466777892415116e-15
+    },
+    {
+      "percent_polling": 0.1,
+      "N_relevant": 10400,
+      "N_w": 5300,
+      "N_l": 5100,
+      "N_2": 1040,
+      "N_1": 9360,
+      "N_w1": 4770,
+      "N_l1": 4590,
+      "N_w2": 530,
+      "N_l2": 510,
+      "minerva_round_size": 308,
+      "minerva_combined_pvalue": 0.09896738364794955,
+      "minerva_comparison_pvalue": 1.0,
+      "minerva_polling_pvalue": 0.02018603830401883,
+      "minerva_alloc_lambda": -1.500666673310289e-14,
+      "r2bravo_round_size": 517,
+      "r2bravo_combined_pvalue": 0.08596365344950319,
+      "r2bravo_comparison_pvalue": 1.0,
+      "r2bravo_polling_pvalue": 0.0169255385913562,
+      "r2bravo_alloc_lambda": -1.5006667580135837e-14
+    }
+  ]
+}
