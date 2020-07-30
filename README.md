@@ -14,7 +14,7 @@ Please ask me any questions that come up. obroadrick@gwu.edu
 
 Here is a plot illustrating the method I use to find the polling stratum round size that achieves a desired probability of stopping. Plotted over possible values for k (winner votes drawn in the round) are both the combined pvalue produced by that k (using 2-strata SUITE with Minerva for the polling stratum and a fixed 750 comparisons) as well as the probability of that k under the alternative hypothesis (a binomial distribution centered around the announced tally for the winner. All the numbers are based on the first example SUITE uses, a relatively tight margin of .0192.
 
-![Round Size Visualization Plot](imgs/round_size_visualization)
+![Round Size Visualization Plot](imgs/round_size_visualization.png)
 
 From the plot, you can tell that this round size of 77 achieves a 90% probability of stopping because the value kmax such that Pr[k>=kmax | H_a] >= .9 and the pvalue corresponding to kmax is less than or equal to alpha (.1).
 
