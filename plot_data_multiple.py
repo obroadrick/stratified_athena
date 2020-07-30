@@ -36,7 +36,7 @@ for audit in data['audits']:
     r2bravo_round_sizes.append(r2bravo_round_size)
 
 # open desired stratified data json file for comparison
-with open('data/data_stratified_intermediate_margin.txt') as json_file:
+with open('data/data_stratified_smaller_margin.txt') as json_file:
     data_2 = json.load(json_file)
     #pprint.pprint(data)
 
@@ -68,7 +68,7 @@ minerva_round_size_no_stratification = contest_wide_data['audits'][0]['minerva_r
 r2bravo_round_size_no_stratification = contest_wide_data['audits'][0]['r2bravo_round_size']
 
 # open the contest-wide data for larger margin
-with open('data/data_contest_wide_intermediate_margin.txt') as json_file:
+with open('data/data_contest_wide_smaller_margin.txt') as json_file:
     contest_wide_data_larger_margin = json.load(json_file)
     #pprint.pprint(data)
 
@@ -82,14 +82,14 @@ fig.suptitle('Round Sizes for Varying Polling Stratum Sizes (for margins: '+str(
 ax = fig.add_subplot(111)#numrows, numcols, num of subplot being referenced
 ax.scatter(percent_pollings, minerva_round_sizes, color='b', marker='o', label='Minerva (.0192 margin)')
 ax.scatter(percent_pollings, r2bravo_round_sizes, color='r', marker='x', label='R2 Bravo (.0192 margin)')
-ax.scatter(percent_pollings_2, minerva_round_sizes_2, color='g', marker='o', label='Minerva (.0577 margin)')
-ax.scatter(percent_pollings_2, r2bravo_round_sizes_2, color='y', marker='x', label='R2 Bravo (.0577 margin)')
+ax.scatter(percent_pollings_2, minerva_round_sizes_2, color='g', marker='o', label='Minerva (.0096 margin)')
+ax.scatter(percent_pollings_2, r2bravo_round_sizes_2, color='y', marker='x', label='R2 Bravo (.0096 margin)')
 ax.set_xlabel('Polling Stratum Size (as percent of relevant ballots)', fontsize=20)
 ax.set_ylabel('First Round Size (90% stopping probability)', fontsize=20)
 ax.plot([0,1],[minerva_round_size_no_stratification,minerva_round_size_no_stratification], label='Contest-Wide Minerva Audit (.0192 margin)', linestyle='dashed', color='b')
 ax.plot([0,1],[r2bravo_round_size_no_stratification,r2bravo_round_size_no_stratification], label='Contest-Wide R2 Bravo Audit (.0192 margin)', linestyle='dashed', color='r')
-ax.plot([0,1],[minerva_round_size_no_stratification_larger_margin,minerva_round_size_no_stratification_larger_margin], label='Contest-Wide Minerva Audit (.0577 margin)', linestyle='dashed', color='g')
-ax.plot([0,1],[r2bravo_round_size_no_stratification_larger_margin,r2bravo_round_size_no_stratification_larger_margin], label='Contest-Wide R2 Bravo Audit (.0577 margin)', linestyle='dashed', color='y')
+ax.plot([0,1],[minerva_round_size_no_stratification_larger_margin,minerva_round_size_no_stratification_larger_margin], label='Contest-Wide Minerva Audit (.0096 margin)', linestyle='dashed', color='g')
+ax.plot([0,1],[r2bravo_round_size_no_stratification_larger_margin,r2bravo_round_size_no_stratification_larger_margin], label='Contest-Wide R2 Bravo Audit (.0096 margin)', linestyle='dashed', color='y')
 plt.legend(loc='upper left', fontsize=20)
 plt.setp(ax.get_xticklabels(), fontsize=18)
 plt.setp(ax.get_yticklabels(), fontsize=18)

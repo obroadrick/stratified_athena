@@ -112,7 +112,7 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
     feasible_lambda_range = calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2)
 
     left = 1
-    right = round(N_2 / 2)
+    right = N_2
      
     while(1):
         n2 = math.ceil((left + right) / 2 )
@@ -153,8 +153,8 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1 and n2 == right):
-            if (right == round(N_2 / 3)):
-                print("more than one third of the stratum votes are required")
+            if (right == N_2):
+                print("required round size is greater than stratum size")
             print(combination_results['refined'])
             return  {
                         "round_size":right,
@@ -195,8 +195,8 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1):
-            if (right == round(N / 2)):
-                print("more than one third of the stratum votes are required")
+            if (right == N):
+                print("required round size is greater than stratum size")
             return right
 
 def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, alpha, underlying=None):
@@ -229,8 +229,8 @@ def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, a
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1):
-            if (right == round(N / 2)):
-                print("more than one third of the stratum votes are required")
+            if (right == N):
+                print("required round size is greater than stratum size")
             return right
 
 
@@ -249,7 +249,7 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
     feasible_lambda_range=calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2)
 
     left = 1
-    right = round(N_2 / 2)
+    right = N_2
      
     while(1):
         n2 = math.ceil((left + right) / 2)
@@ -292,8 +292,8 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
  
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1 and n2 == right):
-            if (right == round(N_2 / 3)):
-                print("more than one third of the stratum votes are required")
+            if (right == N_2):
+                print("requried round size is greater than stratum size")
             return  {
                         "round_size":right,
                         "combined_pvalue":pvalue,

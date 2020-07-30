@@ -23,6 +23,22 @@ From the plot, you can tell that this round size of 84 achieves a 90% probabilit
 Here is a plot of the ballot polling stratum minimum first round sizes that achieve 90% stopping probability for a 2-strata audit with ~2% margin, a fixed 750 ballots sampled in the comparison stratum, and various stratum sizes (on x-axis as percantage of total relevant ballots). Note that the 2-strata audit can reduce the number of ballots polled if a contest-wide polling audit were performed for significant polling stratum sizes (over half in this example). A tighter margin reduces the polling stratum size that still yields gains in efficiency, but even for this relatively tight race (~2% margin) more than half the relevant ballots can be in the polling stratum and still reduce the polling round size.
 
 ![Round Size Plot](imgs/stratified_plot.png)
+## Variables that affect round size
+Below are the results of test in which I used the same numbers as in the previous example, but I have isolated and changed one variable to see how the round size is affected.
+### Round sizes: larger margin
+So far I've tested ~20% and ~6% both of which were so tight a margin that they couldn't be easily represented on the same plot as the previous example. TODO: try 4% and add results here
+
+![Larger Margin Plot](intermediate_margin.png)
+
+### Round sizes: smaller margin
+~1% margin has been tried, but need to re-do it with proper right bounds on search.
+
+![Smaller Margin Plot](smaller_margin.png)
+
+### Round sizes: higher comparison stratum sample
+While it is reasonable to expect that increasing the number of comparisons would decrease the required polling sample size, this is often not the case. For relatively high perctentage polling stratum sizes, the SUITE overstatement error allocation, lambda, is 0. Therefore, increasing the sample size in the comparison stratum doesn't actually reduce the comparison stratum pvalue, rather it remains near 1, while the pressure of handling the whole of the error is left to the less efficient polling stratum. The following plot of the same contest round sizes for both the original 750 ballot comparison sample as well as a 1500 ballot comparison sample illustrates the point. While a reduction in round size is seen for small polling stratum sizes, the rest of the round sizes are the same for both 750 comparisons and 1500 comparisons.
+
+![Double Comparison Sample Size Plot](imgs/double_comparison.png)
 
 # Files in this repo (updated periodically)
 ###  audit_s.py
