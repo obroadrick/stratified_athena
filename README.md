@@ -8,7 +8,7 @@ This code is messy and ugly. For now I more focused on getting things working an
 
 Please ask me any questions that come up. obroadrick@gwu.edu
 
-# examples
+# Examples
 
 ## Finding round sizes
 

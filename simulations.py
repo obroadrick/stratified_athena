@@ -1,3 +1,23 @@
+"""
+Functions in this file perform simulations of 2-strata audits. Since my
+work has mostly transitioned to analytical methods at the moment, rather 
+than simulations, these functions are not as capable as I plan to make them.
+
+Future work will build these functions out to handle various true underlying
+tallies and will allow them to be used to confirm analytical methods as well
+as observe how closely the claimed risk of 2-strata audits predict the true
+risk.
+
+Additionally, this file contains functions for computing first round pvalues
+for Minerva and R2 Bravo. Multiple versions of these functions exist that 
+either use r2b2 code (thanks Grant!) or my own code, and each can handle 
+different input types (full, ordered sample of 1's and 0's or raw winner
+tally).
+
+Oliver Broadrick 2020
+"""
+
+
 import time
 import numpy as np
 import scipy as sp

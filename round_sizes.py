@@ -1,3 +1,15 @@
+"""
+The functions in this file are used to find the minimum round sizes that
+produce a desired probability of stopping. Contest-wide Minerva and R2 Bravo 
+audits as well as 2-strata audits with either Minerva or R2 Bravo are 
+included. 
+
+Additionally there are functions for computing the probablility distribution
+over possible pvalues for given round sizes in a 2-strata audit.
+
+Oliver Broadrick 2020
+"""
+
 import time
 import numpy as np
 import scipy as sp
@@ -162,7 +174,7 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
     N = N_w + N_l 
 
     left = 1
-    right = round(N / 2)
+    right = N
      
     while(1):
         n = math.ceil((left + right) / 2)
@@ -196,7 +208,7 @@ def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, a
     N = N_w + N_l 
 
     left = 1
-    right = round(N / 2)
+    right = N
      
     while(1):
         n = math.ceil((left + right) / 2)

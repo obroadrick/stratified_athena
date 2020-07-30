@@ -15,7 +15,7 @@ data['audits'] = []
 alpha = 0.1
 
 # overall numbers (same as suite example 1)
-N_w = 55000
+N_w = 52500
 N_l = 104000 - N_w
 N_relevant = N_w + N_l
 
@@ -37,6 +37,6 @@ data['audits'].append({
 })
 
 #update the file each time (hopefully will write over?
-with open('data/data_contest_wide_intermediate_margin.txt', 'w') as outfile:
+with open('data/data_contest_wide_smaller_margin.txt', 'w') as outfile:
     json.dump(data, outfile, indent=2)
 
