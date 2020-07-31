@@ -33,7 +33,7 @@ For even a small increase in margin, the polling stratum first round sizes are r
 ![Larger Margin Plot](imgs/intermediate_margin.png)
 
 ### Round sizes: smaller margin
-Round sizes for a contest with ~1% margin are shown on the plot below to be compared to the ~2% margin contest. There appears to be an issue with this data: see ![the raw json data itself](data/data_stratified_smaller_margin.txt) if interested in taking a look at my weird results.
+Round sizes for a contest with ~1% margin are shown on the plot below to be compared to the ~2% margin contest. There appears to be an issue with this data: see [the raw json data itself](data/data_stratified_smaller_margin.txt) if interested in taking a look at my weird results.
 
 ![Smaller Margin Plot](imgs/smaller_margin.png)
 
