@@ -31,7 +31,7 @@ So far I've tested ~20% and ~6% both of which were so tight a margin that they c
 ![Larger Margin Plot](imgs/intermediate_margin.png)
 
 ### Round sizes: smaller margin
-~1% margin has been tried, but need to re-do it with proper right bounds on search.
+~1% margin has been tried, but there seems to be a mistake... not sure. Here is the data I have now. I'll look for the error! Of course this may just be correct...? Still need to make sense of things. Lambda is not zero for the higher percentage polling strata and is also different (substantially so) for the Minerva and R2 Bravo versions of those size strata. See ![the raw json data itself](data/data_stratified_smaller_margin.txt) if interested in taking a look at my weird results.
 
 ![Smaller Margin Plot](imgs/smaller_margin.png)
 

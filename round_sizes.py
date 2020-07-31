@@ -95,7 +95,7 @@ def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlyi
 
     return prob_stop
 
-def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None):
+def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=None):
     """
     This function will also compute minimum round size for the 
     passed stopping probability, but it will do so much more 
@@ -112,7 +112,8 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
     feasible_lambda_range = calculate_lambda_range(N_w1, N_l1, N_1, N_w2, N_l2, N_2)
 
     left = 1
-    right = N_2
+    if (right is None):
+        right = N_2
      
     while(1):
         n2 = math.ceil((left + right) / 2 )
@@ -165,7 +166,7 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
                     }
 
 
-def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, alpha, underlying=None):
+def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, alpha, underlying=None, right=None):
     """
     Finds the first round size that achieves the passed stopping_probability
     for a Minerva audit (with no stratification). 
@@ -174,7 +175,8 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
     N = N_w + N_l 
 
     left = 1
-    right = N
+    if (right is None):
+        right = N
      
     while(1):
         n = math.ceil((left + right) / 2)
@@ -199,7 +201,7 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
                 print("required round size is greater than stratum size")
             return right
 
-def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, alpha, underlying=None):
+def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, alpha, underlying=None, right=None):
     """
     Finds the first round size that achieves the passed stopping_probability
     for an R2 Bravo audit (with no stratification). 
@@ -234,7 +236,7 @@ def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, a
             return right
 
 
-def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None):
+def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=None):
     """
     This function will also compute minimum round size for the 
     passed stopping probability, but it will do so much more 

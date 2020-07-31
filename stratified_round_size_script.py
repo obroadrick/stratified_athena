@@ -9,6 +9,27 @@ data['audits'] = []
 
 # loop through the various percent sizes of the polling stratum
 for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,.85,.9,.95]:
+    # define a right bounds for the round size searchs based on the previous size found
+    if (percent_polling == .05):
+        minerva_right = None
+        r2bravo_right = None
+    elif (percent_polling < .25):
+        # times 4 is sufficient here (I tested it)
+        minerva_prev = data['audits'][len(data['audits']) - 1]['minerva_round_size']
+        r2bravo_prev = data['audits'][len(data['audits']) - 1]['r2bravo_round_size']
+        minerva_right = 4 * minerva_prev
+        print(minerva_right)
+        r2bravo_right = 4 * r2bravo_prev
+        print(r2bravo_right)
+    else:
+        # times 2 is sufficient here (I tested it)
+        minerva_prev = data['audits'][len(data['audits']) - 1]['minerva_round_size']
+        r2bravo_prev = data['audits'][len(data['audits']) - 1]['r2bravo_round_size']
+        minerva_right = 2 * minerva_prev
+        print(minerva_right)
+        r2bravo_right = 2 * r2bravo_prev
+        print(r2bravo_right)
+
     # risk limit (same as suite example 1)
     alpha = 0.1
 
@@ -52,8 +73,9 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
     #   the contest truly is as announced
     stopping_probability = .9
 
+    
     # obtain and print the minerva round size along with pvalues and lambda
-    minerva_results = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    minerva_results = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=minerva_right)
     print ("minerva_round_size: "+str(minerva_results['round_size']))
     print("combined_pvalue: "+str(minerva_results['combined_pvalue']))
     print("comparison pvalue: "+str(minerva_results['comparison_pvalue']))
@@ -61,7 +83,7 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
     print("alloc_lambda: "+str(minerva_results['alloc_lambda']))
 
     # obtain and print the r2bravo round size along with pvalues and lambda
-    r2bravo_results = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    r2bravo_results = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=r2bravo_right)
     print ("r2bravo_round_size: "+str(r2bravo_results['round_size']))
     print("combined_pvalue: "+str(r2bravo_results['combined_pvalue']))
     print("comparison pvalue: "+str(r2bravo_results['comparison_pvalue']))
@@ -93,7 +115,7 @@ for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,
     })
 
     # update the file each loop (for convenience of checking progress)
-    with open('data/data_stratified_smaller_margin.txt', 'w') as outfile:
+    with open('data/data_stratified_smaller_margin_TEST.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 

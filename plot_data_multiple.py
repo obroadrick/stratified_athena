@@ -36,7 +36,7 @@ for audit in data['audits']:
     r2bravo_round_sizes.append(r2bravo_round_size)
 
 # open desired stratified data json file for comparison
-with open('data/data_stratified_smaller_margin.txt') as json_file:
+with open('data/data_stratified_smaller_margin_TEST.txt') as json_file:
     data_2 = json.load(json_file)
     #pprint.pprint(data)
 
