@@ -35,15 +35,19 @@ Contents of results:
     "dist_over_winner_votes":dist_over_winner_votes,
     "pvalues":pvalues
 """
-# find the combined pvalue for kmax in order to plot a line representing the .9 quantile
-#kmax_combined_pvalue = 
+# prob of pvalue less than alpha
+prob_sum = 0
+for pvalue, prob in zip(results['pvalues'], results['dist_over_winner_votes']):
+    if (pvalue <= alpha):
+        prob_sum += prob
+print(prob_sum)
 
 # put everything in a pretty plot
 fig = plt.figure(figsize=(20,10))
 axes = fig.add_subplot(111)
 axes.scatter(results['pvalues'], results['dist_over_winner_votes'],linestyle="solid",color="blue")
 #axes.plot([kmax,kmax], [0, 1], linestyle="dashed", label="kmax (.9 quantile to right)")
-axes.plot([alpha,alpha],[0,.1], linestyle="dashed", label="alpha")
+axes.plot([alpha,alpha],[0,.1], linestyle="dashed", label="alpha (Pr[pvalue<=alpha]="+str(round(prob_sum, 4))+")")
 axes.set_xlabel('pvalues (combined)', fontsize=20)
 axes.set_ylabel('probability (under alt)', fontsize=20)
 plt.legend(loc='upper right', fontsize=20)
