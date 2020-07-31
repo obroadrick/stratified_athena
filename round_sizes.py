@@ -30,7 +30,25 @@ from simulations import minerva_pvalue_direct_count, r2bravo_pvalue_direct_count
 
 def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
     """
-    Hopefully compute a distribution over possible pvalues
+    Computes and returns lists of k values, their associated combined pvalue,
+    and their probability under the null hypothesis. Assumes no errors in 
+    the comparisons.
+
+    Args:
+        N_w1 (int): reported number of votes for the winner in the comparison stratum
+        N_l1 (int): reported number of votes for the loser in the comparison stratum
+        N_w2 (int): reported number of votes for the winner in the polling stratum
+        N_l2 (int): reported number of votes for the loser in the polling stratum
+        n1 (int): number of comparisons
+        n2 (int): first round size in the polling stratum
+        alpha (float): risk limit
+        underlying (dict): feature not yet implemented (coming soon to a repo near you!)
+
+    Return {}:
+        possible_winner_votes ([int]): possible number of winner votes in the polling sample
+        dist_over_winner_votes ([float]): probability of each possible number of winner votes
+        pvalues ([float]): combined pvalue resulting from each possible number of winner votes
+
     """
 
     N_1 = N_w1 + N_l1
@@ -76,8 +94,21 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
 
 def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
     """
-    Compute the stopping probability for the given sample sizes.
-    Computes the full probability distribution over pvalues.
+    Computes the stopping probability for the given sample sizes.
+    Computes the full probability distribution over pvalues to do so.
+
+    Args:
+        N_w1 (int): reported number of votes for the winner in the comparison stratum
+        N_l1 (int): reported number of votes for the loser in the comparison stratum
+        N_w2 (int): reported number of votes for the winner in the polling stratum
+        N_l2 (int): reported number of votes for the loser in the polling stratum
+        n1 (int): number of comparisons
+        n2 (int): first round size in the polling stratum
+        alpha (float): risk limit
+        underlying (dict): feature not yet implemented (coming soon to a repo near you!)
+
+    Return (float):
+        the probability of stopping for the given round sizes
     """
 
     results = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None)
