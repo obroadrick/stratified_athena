@@ -36,7 +36,7 @@ for audit in data['audits']:
     r2bravo_round_sizes.append(r2bravo_round_size)
 
 # open desired stratified data json file for comparison
-with open('data/data_stratified_smaller_margin_TEST.txt') as json_file:
+with open('data/data_stratified_double_comparisons.txt') as json_file:
     data_2 = json.load(json_file)
     #pprint.pprint(data)
 
@@ -57,7 +57,6 @@ for audit in data_2['audits']:
     percent_pollings_2.append(percent_polling)
     minerva_round_sizes_2.append(minerva_round_size)
     r2bravo_round_sizes_2.append(r2bravo_round_size)
-
 # open the contest-wide data
 with open('data/data_contest_wide.txt') as json_file:
     contest_wide_data = json.load(json_file)
@@ -67,6 +66,7 @@ with open('data/data_contest_wide.txt') as json_file:
 minerva_round_size_no_stratification = contest_wide_data['audits'][0]['minerva_round_size']
 r2bravo_round_size_no_stratification = contest_wide_data['audits'][0]['r2bravo_round_size']
 
+"""
 # open the contest-wide data for larger margin
 with open('data/data_contest_wide_smaller_margin.txt') as json_file:
     contest_wide_data_larger_margin = json.load(json_file)
@@ -75,21 +75,22 @@ with open('data/data_contest_wide_smaller_margin.txt') as json_file:
 # obtain desired contest-wide data for larger margin
 minerva_round_size_no_stratification_larger_margin = contest_wide_data_larger_margin['audits'][0]['minerva_round_size']
 r2bravo_round_size_no_stratification_larger_margin = contest_wide_data_larger_margin['audits'][0]['r2bravo_round_size']
+"""
 
 # make a pretty plot of the data
 fig = plt.figure(figsize=(20,10))
 fig.suptitle('Round Sizes for Varying Polling Stratum Sizes (for margins: '+str(overall_margin)+', '+str(overall_margin_larger)+')', fontsize=20)
 ax = fig.add_subplot(111)#numrows, numcols, num of subplot being referenced
-ax.scatter(percent_pollings, minerva_round_sizes, color='b', marker='o', label='Minerva (.0192 margin)')
-ax.scatter(percent_pollings, r2bravo_round_sizes, color='r', marker='x', label='R2 Bravo (.0192 margin)')
-ax.scatter(percent_pollings_2, minerva_round_sizes_2, color='g', marker='o', label='Minerva (.0096 margin)')
-ax.scatter(percent_pollings_2, r2bravo_round_sizes_2, color='y', marker='x', label='R2 Bravo (.0096 margin)')
+ax.scatter(percent_pollings, minerva_round_sizes, color='b', marker='o', label='Minerva (750 comparisons)')
+ax.scatter(percent_pollings, r2bravo_round_sizes, color='r', marker='x', label='R2 Bravo (750 comparisons)')
+ax.scatter(percent_pollings_2, minerva_round_sizes_2, color='g', marker='o', label='Minerva (1500 comparisons)')
+ax.scatter(percent_pollings_2, r2bravo_round_sizes_2, color='y', marker='x', label='R2 Bravo (1500 comparisons)')
 ax.set_xlabel('Polling Stratum Size (as percent of relevant ballots)', fontsize=20)
 ax.set_ylabel('First Round Size (90% stopping probability)', fontsize=20)
 ax.plot([0,1],[minerva_round_size_no_stratification,minerva_round_size_no_stratification], label='Contest-Wide Minerva Audit (.0192 margin)', linestyle='dashed', color='b')
 ax.plot([0,1],[r2bravo_round_size_no_stratification,r2bravo_round_size_no_stratification], label='Contest-Wide R2 Bravo Audit (.0192 margin)', linestyle='dashed', color='r')
-ax.plot([0,1],[minerva_round_size_no_stratification_larger_margin,minerva_round_size_no_stratification_larger_margin], label='Contest-Wide Minerva Audit (.0096 margin)', linestyle='dashed', color='g')
-ax.plot([0,1],[r2bravo_round_size_no_stratification_larger_margin,r2bravo_round_size_no_stratification_larger_margin], label='Contest-Wide R2 Bravo Audit (.0096 margin)', linestyle='dashed', color='y')
+#ax.plot([0,1],[minerva_round_size_no_stratification_larger_margin,minerva_round_size_no_stratification_larger_margin], label='Contest-Wide Minerva Audit (.0096 margin)', linestyle='dashed', color='g')
+#ax.plot([0,1],[r2bravo_round_size_no_stratification_larger_margin,r2bravo_round_size_no_stratification_larger_margin], label='Contest-Wide R2 Bravo Audit (.0096 margin)', linestyle='dashed', color='y')
 plt.legend(loc='upper left', fontsize=20)
 plt.setp(ax.get_xticklabels(), fontsize=18)
 plt.setp(ax.get_yticklabels(), fontsize=18)

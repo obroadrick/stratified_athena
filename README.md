@@ -16,22 +16,24 @@ Here is a plot illustrating the method I use to find the polling stratum round s
 
 ![Round Size Visualization Plot](imgs/round_size_visualization.png)
 
-From the plot, you can tell that this round size of 84 achieves a 90% probability of stopping because the value kmax such that Pr[k>=kmax | H_a] >= .9 and the pvalue corresponding to kmax is less than or equal to alpha (.1).
+From the plot, you can tell that this round size of 84 achieves a 90% probability of stopping because the value kmax such that Pr[k>=kmax | H_a] >= .9 and the pvalue corresponding to kmax <= .1 = alpha, and as k increases from kmax, the pvalue only decreases.
 
 ## Round sizes for various polling stratum sizes
 
 Here is a plot of the ballot polling stratum minimum first round sizes that achieve 90% stopping probability for a 2-strata audit with ~2% margin, a fixed 750 ballots sampled in the comparison stratum, and various stratum sizes (on x-axis as percantage of total relevant ballots). Note that the 2-strata audit can reduce the number of ballots polled if a contest-wide polling audit were performed for significant polling stratum sizes (over half in this example). A tighter margin reduces the polling stratum size that still yields gains in efficiency, but even for this relatively tight race (~2% margin) more than half the relevant ballots can be in the polling stratum and still reduce the polling round size.
 
 ![Round Size Plot](imgs/stratified_plot.png)
+
 ## Variables that affect round size
 Below are the results of test in which I used the same numbers as in the previous example, but I have isolated and changed one variable to see how the round size is affected.
+
 ### Round sizes: larger margin
-So far I've tested ~20% and ~6% both of which were so tight a margin that they couldn't be easily represented on the same plot as the previous example. TODO: try 4% and add results here
+For even a small increase in margin, the polling stratum first round sizes are reduced significantly. The plot below allows you to compare the ~2% margin with a ~6% margin. As seen, the larger margin round sizes do not exceed their contest-wide counterparts until they reach a higher polling stratum size. For wider margins, 2-strata audits can reduce required sample sizes for even larger polling stratum sizes, whereas for tigher margins smaller polling stratum sizes are required to reap the benefits of the 2-strata audit.
 
 ![Larger Margin Plot](imgs/intermediate_margin.png)
 
 ### Round sizes: smaller margin
-~1% margin has been tried, but there seems to be a mistake... not sure. Here is the data I have now. I'll look for the error! Of course this may just be correct...? Still need to make sense of things. Lambda is not zero for the higher percentage polling strata and is also different (substantially so) for the Minerva and R2 Bravo versions of those size strata. See ![the raw json data itself](data/data_stratified_smaller_margin.txt) if interested in taking a look at my weird results.
+Round sizes for a contest with ~1% margin are shown on the plot below to be compared to the ~2% margin contest. There appears to be an issue with this data: see ![the raw json data itself](data/data_stratified_smaller_margin.txt) if interested in taking a look at my weird results.
 
 ![Smaller Margin Plot](imgs/smaller_margin.png)
 
