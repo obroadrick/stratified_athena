@@ -15,7 +15,7 @@ data = {}
 data['audits'] = []
 
 # loop through the various comparison stratum sample sizes
-for n1 in range(100, 1001, 25):
+for n1 in range(100, 1001, 10):
     # risk limit
     alpha = 0.1
 
@@ -59,7 +59,7 @@ for n1 in range(100, 1001, 25):
     stopping_probability = .9
 
     # obtain and print the minerva round size along with pvalues and lambda
-    minerva_results = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    minerva_results = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right = 10*N_2)
     print ("minerva_round_size: "+str(minerva_results['round_size']))
     print("combined_pvalue: "+str(minerva_results['combined_pvalue']))
     print("comparison pvalue: "+str(minerva_results['comparison_pvalue']))
@@ -67,7 +67,7 @@ for n1 in range(100, 1001, 25):
     print("alloc_lambda: "+str(minerva_results['alloc_lambda']))
 
     # obtain and print the r2bravo round size along with pvalues and lambda
-    r2bravo_results = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None)
+    r2bravo_results = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right = 10*N_2)
     print ("r2bravo_round_size: "+str(r2bravo_results['round_size']))
     print("combined_pvalue: "+str(r2bravo_results['combined_pvalue']))
     print("comparison pvalue: "+str(r2bravo_results['comparison_pvalue']))
@@ -100,7 +100,7 @@ for n1 in range(100, 1001, 25):
     })
 
     # update the file each loop (for convenience of checking progress)
-    with open('data/data_stratified_vary_comparisons2.txt', 'w') as outfile:
+    with open('data/data_stratified_vary_comparisons3.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 

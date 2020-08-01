@@ -13,7 +13,7 @@ import pprint
 import matplotlib.pyplot as plt
 
 # open desired stratified data json file
-with open('data/data_stratified_vary_comparisons.txt') as json_file:
+with open('data/data_stratified_vary_comparisons3.txt') as json_file:
     data = json.load(json_file)
     #pprint.pprint(data)
 
