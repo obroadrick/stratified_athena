@@ -44,6 +44,11 @@ While it is reasonable to expect that increasing the number of comparisons would
 
 ![Double Comparison Sample Size Plot](imgs/double_comparisons.png)
 
+### Affect of number of comparisons on polling sample size
+As seen in the previous graph, for a sufficient number of comparisons, increasing the number of comparisons no longer decreases the polling stratum first round size. For such audits, lambda = 0 and all overstatement error is allocated to the polling stratum. Below is a plot of polling stratum first round size for various comparison sample sizes. Such a plot can be used to determine roughly the minimum comparison sample size required to achieve lambda = 0, thus minimizing the polling stratum sample size with as few comparisons as possible.
+
+![Various Comparison Sample Sizes](imgs/comparisons.png)
+
 # Files in this repo (updated periodically)
 ###  audit_s.py
 Audit class from r2b2, modified to handle null hypotheses of any margin. 
