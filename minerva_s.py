@@ -1,3 +1,8 @@
+"""
+This file is from r2b2 and has been modified to allow for 
+a margin other than zero under the null hypothesis.
+"""
+
 """Minerva audit module."""
 import math
 from typing import List

@@ -1,3 +1,11 @@
+"""
+This script was being used to run simulations of polling stratum
+samples in 2-strata audits before I changed my focus to analytical
+methods of finding round size and stopping probability.
+
+Oliver Broadrick 2020
+"""
+
 import numpy as np
 from simulation_functions import simulate_fisher_combined_audits
 from fishers_combination import calculate_lambda_range

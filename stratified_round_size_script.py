@@ -1,3 +1,13 @@
+"""
+This script generates computes and stores in a json file the polling stratum
+round sizes that achieve a desired probability of stopping under the alternative
+hypothesis that the election is truly as announced. It produces both
+Minerva and R2 Bravo round sizes for various polling stratum sizes (as a 
+percentage of relevant ballots).
+
+Oliver Broadrick 2020
+"""
+
 from round_sizes import find_sample_size_for_stopping_prob_efficiently, find_sample_size_for_stopping_prob_efficiently_r2bravo
 import math
 import matplotlib.pyplot as plt
