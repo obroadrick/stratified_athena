@@ -31,8 +31,8 @@ from simulations import minerva_pvalue_direct_count, r2bravo_pvalue_direct_count
 def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
     """
     Computes and returns lists of k values, their associated combined pvalue,
-    and their probability under the null hypothesis. Assumes no errors in 
-    the comparisons.
+    and their probability under the null hypothesis for a 2-strata audit using
+    Minerva in the ballot polling stratum. Assumes no errors in the comparisons.
 
     Args:
         N_w1 (int): reported number of votes for the winner in the comparison stratum
@@ -94,8 +94,12 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
 
 def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
     """
-    Computes the stopping probability for the given sample sizes.
-    Computes the full probability distribution over pvalues to do so.
+    Computes the stopping probability for the given polling stratum first
+    round sizes in a 2-strata audit with Minerva.
+    Computes the full probability distribution over pvalues to do so. (AKA real slow)
+
+    Note/Plan: Come back and search for kmin then find pr[k >= kmin | alt]
+                Should work and be faster...
 
     Args:
         N_w1 (int): reported number of votes for the winner in the comparison stratum
@@ -118,10 +122,16 @@ def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlyi
     pvalues = results["pvalues"]
 
     # find the index of the first pvalue that passes the stopping condition
+    index = None
     for i,pvalue in zip(range(0, n2 + 1), pvalues):
         if (pvalue <= alpha):
             index = i
             break
+
+    # if there is not such index then the probability of stopping is 0
+    if (index is None):
+        return 0
+
     prob_stop = sum(dist_over_winner_votes[index:])
 
     return prob_stop

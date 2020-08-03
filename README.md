@@ -10,6 +10,12 @@ Please ask me any questions that come up. obroadrick@gwu.edu
 
 # Examples
 
+## Stopping probability for round sizes
+
+Below is a plot of stopping probability as a function of ballot polling stratum round size for a 2-strata audit using Minerva in the ballot polling stratum. This contest has a margin of 2% for a total of 104000 relevant votes with only 5% of those votes in the polling stratum; this allows a better view of the jagged curve on the plot.
+
+![Stopping Probability](imgs/stopping_probability.png)
+
 ## Finding round sizes
 
 Here is a plot illustrating the method I use to find the polling stratum round size that achieves a desired probability of stopping. Plotted over possible values for k (winner votes drawn in the round) are both the combined pvalue produced by that k (using 2-strata SUITE with Minerva for the polling stratum and a fixed 750 comparisons) as well as the probability of that k under the alternative hypothesis (a binomial distribution centered around the announced tally for the winner. All the numbers are based on the first example SUITE uses, a relatively tight margin of .0192.
