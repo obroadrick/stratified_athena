@@ -184,11 +184,14 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
             left = n2
         elif (pvalue <= alpha):
             right = n2
- 
+
+        # if left = right then the initial right bound was too small
+        if (right == left):
+            print("required round size is too larger")
+            return None # not sure if returning None is proper thing to do here...
+
         # when and right converge, right is the minimum round size that achieves stopping_probability
         if (left == right - 1 and n2 == right):
-            if (right == N_2):
-                print("required round size is greater than stratum size")
             print(combination_results['refined'])
             return  {
                         "round_size":right,
@@ -220,7 +223,7 @@ def find_sample_size_for_stopping_prob_minerva(stopping_probability, N_w, N_l, a
         kmax = math.floor(binom.ppf(1 - stopping_probability, n, N_w / N))
 
         # compute pvalue for this kmax
-        pvalue = minerva_pvalue_direct_count(winner_votes=kmax, n=n, popsize=N, alpha=alpha, Vw=N_w, Vl=N_l, null_margin=1000)
+        pvalue = minerva_pvalue_direct_count(winner_votes=kmax, n=n, popsize=N, alpha=alpha, Vw=N_w, Vl=N_l, null_margin=0)
 
         # update binary search bounds
         if (pvalue > alpha):

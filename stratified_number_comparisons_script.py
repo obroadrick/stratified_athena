@@ -100,7 +100,7 @@ for n1 in range(100, 1001, 10):
     })
 
     # update the file each loop (for convenience of checking progress)
-    with open('data/data_stratified_vary_comparisons3.txt', 'w') as outfile:
+    with open('data/data_stratified_vary_comparisons_TEST_RIGHTS.txt', 'w') as outfile:
         json.dump(data, outfile, indent=2)
 
 
