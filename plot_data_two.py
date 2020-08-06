@@ -85,7 +85,7 @@ ax.scatter(percent_pollings, minerva_round_sizes, color='b', marker='o', label='
 ax.scatter(percent_pollings, r2bravo_round_sizes, color='r', marker='x', label='R2 Bravo (750 comparisons)')
 ax.scatter(percent_pollings_2, minerva_round_sizes_2, color='g', marker='o', label='Minerva (1500 comparisons)')
 ax.scatter(percent_pollings_2, r2bravo_round_sizes_2, color='y', marker='x', label='R2 Bravo (1500 comparisons)')
-ax.set_xlabel('Polling Stratum Size (as percent of relevant ballots)', fontsize=20)
+ax.set_xlabel('Polling Stratum Size (as proportion of relevant ballots)', fontsize=20)
 ax.set_ylabel('First Round Size (90% stopping probability)', fontsize=20)
 ax.plot([0,1],[minerva_round_size_no_stratification,minerva_round_size_no_stratification], label='Contest-Wide Minerva Audit (.0192 margin)', linestyle='dashed', color='b')
 ax.plot([0,1],[r2bravo_round_size_no_stratification,r2bravo_round_size_no_stratification], label='Contest-Wide R2 Bravo Audit (.0192 margin)', linestyle='dashed', color='r')
