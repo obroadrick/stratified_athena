@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 # begin plot
 fig = plt.figure(figsize=(20,10))
-fig.suptitle('Round Sizes for Varying Polling Stratum Sizes (for margins: 1% to 8%)', fontsize=20)
+fig.suptitle('Round Sizes for Varying Polling Stratum Sizes (for margins: 2% to 6%)', fontsize=20)
 ax = fig.add_subplot(111)#numrows, numcols, num of subplot being referenced
 
 # array of data files to be plotted
@@ -68,7 +68,7 @@ for margin, color in zip(range(2,7), ['r','b','g','c','m']):
     ax.plot([0,1],[r2bravo_round_size_no_stratification,r2bravo_round_size_no_stratification], label='Contest-Wide R2 Bravo ('+str(margin)+'% margin)', linestyle='dashed',color=color)
 
 # add labels and adjust font sizes, then show
-ax.set_xlabel('Polling Stratum Size (as percent of relevant ballots)', fontsize=20)
+ax.set_xlabel('Polling Stratum Size (as proportion of relevant ballots)', fontsize=20)
 ax.set_ylabel('First Round Size (90% stopping probability)', fontsize=20)
 plt.legend(loc='upper left', fontsize=20)
 plt.setp(ax.get_xticklabels(), fontsize=18)
