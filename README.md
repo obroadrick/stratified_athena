@@ -4,7 +4,7 @@ This repository is my exploratory work on stratified audits, under Professor Vor
 
 A lot of this code is pulled straight from [the SUITE work](https://github.com/pbstark/CORLA18/tree/master/code) and some is pulled from [the minerva branch of r2b2](https://github.com/gwexploratoryaudits/r2b2/tree/minerva).
 
-This code is messy and ugly. For now I more focused on getting things working and producing meaningful results, less focused on code ready to be integrated into r2b2....
+This code is messy and ugly. For now I'm more focused on getting things working and producing meaningful results, less focused on code ready to be integrated into r2b2....
 
 Please ask me any questions that come up. obroadrick@gwu.edu
 
@@ -33,17 +33,7 @@ Here is a plot of the ballot polling stratum minimum first round sizes that achi
 ![Round Size Plot](imgs/stratified_plot.png)
 
 ## Variables that affect round size
-Below are the results of test in which I used the same numbers as in the previous example, but I have isolated and changed one variable to see how the round size is affected.
-
-### Round sizes: larger margin
-For even a small increase in margin, the polling stratum first round sizes are reduced significantly. The plot below allows you to compare the ~2% margin with a ~6% margin. As seen, the larger margin round sizes do not exceed their contest-wide counterparts until they reach a higher polling stratum size. For wider margins, 2-strata audits can reduce required sample sizes for even larger polling stratum sizes, whereas for tigher margins smaller polling stratum sizes are required to reap the benefits of the 2-strata audit.
-
-![Larger Margin Plot](imgs/intermediate_margin.png)
-
-### Round sizes: smaller margin
-Round sizes for a contest with ~1% margin are shown on the plot below to be compared to the ~2% margin contest. There appears to be an issue with this data: see [the raw json data itself](data/data_stratified_smaller_margin.txt) if interested in taking a look at my weird results.
-
-![Smaller Margin Plot](imgs/smaller_margin.png)
+Below are the results of tests in which I used the same numbers as in the previous example, but I have isolated and changed one variable to see how the round size is affected.
 
 ### Affect of margin on round size
 Below is plot of Minerva stratum round sizes for several different margins. 
@@ -54,12 +44,12 @@ And here is the same plot for R2 Bravo; it has similar traits, just with higher 
 
 ![Many Margins R2 Bravo](imgs/many_margins_r2bravo.png)
 
-### Round sizes: higher comparison stratum sample
+### AFfect of more comparisons on polling round size
 While it is reasonable to expect that increasing the number of comparisons would decrease the required polling sample size, this is often not the case. For relatively high perctentage polling stratum sizes, the SUITE overstatement error allocation, lambda, is 0. Therefore, increasing the sample size in the comparison stratum doesn't actually reduce the comparison stratum pvalue, rather it remains near 1, while the pressure of handling the whole of the error is left to the less efficient polling stratum. The following plot of the same contest round sizes for both the original 750 ballot comparison sample as well as a 1500 ballot comparison sample illustrates the point. While a reduction in round size is seen for small polling stratum sizes, the rest of the round sizes are the same for both 750 comparisons and 1500 comparisons.
 
 ![Double Comparison Sample Size Plot](imgs/double_comparisons.png)
 
-### Affect of number of comparisons on polling sample size
+### Plot of polling round sizes for different comparison sample sizes
 As seen in the previous graph, for a sufficient number of comparisons, increasing the number of comparisons no longer decreases the polling stratum first round size. For such audits, lambda = 0 and all overstatement error is allocated to the polling stratum. Below is a plot of polling stratum first round size for various comparison sample sizes. Such a plot can be used to determine roughly the minimum comparison sample size required to achieve lambda = 0, thus minimizing the polling stratum sample size with as few comparisons as possible.
 
 ![Various Comparison Sample Sizes](imgs/comparisons.png)
