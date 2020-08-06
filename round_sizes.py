@@ -92,7 +92,7 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
     }
         
 
-def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
+def compute_stopping_probability_whole_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
     """
     Computes the stopping probability for the given polling stratum first
     round sizes in a 2-strata audit with Minerva.
@@ -100,6 +100,49 @@ def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlyi
 
     Note/Plan: Come back and search for kmin then find pr[k >= kmin | alt]
                 Should work and be faster...
+
+    Args:
+        N_w1 (int): reported number of votes for the winner in the comparison stratum
+        N_l1 (int): reported number of votes for the loser in the comparison stratum
+        N_w2 (int): reported number of votes for the winner in the polling stratum
+        N_l2 (int): reported number of votes for the loser in the polling stratum
+        n1 (int): number of comparisons
+        n2 (int): first round size in the polling stratum
+        alpha (float): risk limit
+        underlying (dict): feature not yet implemented (coming soon to a repo near you!)
+
+    Return (float):
+        the probability of stopping for the given round sizes
+    """
+
+    results = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None)
+
+    possible_winner_votes = results["possible_winner_votes"]
+    dist_over_winner_votes = results["dist_over_winner_votes"]
+    pvalues = results["pvalues"]
+
+    # find the index of the first pvalue that passes the stopping condition
+    index = None
+    for i,pvalue in zip(range(0, n2 + 1), pvalues):
+        if (pvalue <= alpha):
+            index = i
+            break
+
+    # if there is not such index then the probability of stopping is 0
+    if (index is None):
+        return 0
+
+    prob_stop = sum(dist_over_winner_votes[index:])
+
+    return prob_stop
+
+def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
+    """
+    Computes the stopping probability for the given strata sample sizes for 
+    a 2-strata audit with Minerva for the polling stratum by finding
+    kmin, then finding Pr[k >= kmin | alt].
+
+    NOT YET DONE
 
     Args:
         N_w1 (int): reported number of votes for the winner in the comparison stratum

@@ -1,0 +1,46 @@
+{
+  "contests": {
+    "presidential": {
+      "winners": 1,
+      "candidates": [
+        "Clinton",
+        "Trump"
+      ],
+      "results": [
+        2268839.0,
+        2279543.0
+      ],
+      "ballots_cast": 4799284.0,
+      "state_id": 26,
+      "margin": -0.0023533643392309616,
+      "Arlo_pv_raw": 0,
+      "Arlo_pv_scaled": 0,
+      "Arlo_fz": 2849575.0,
+      "Athena_fz": 1349799.0
+    }
+  },
+  "audits": [
+    {
+      "percent_polling": 0.05,
+      "N_relevant": 4548382.0,
+      "N_w": 2279543.0,
+      "N_l": 2268839.0,
+      "N_2": 227419,
+      "N_1": 4320963.0,
+      "N_w1": 2165566,
+      "N_l1": 2155397.0,
+      "N_w2": 113977.0,
+      "N_l2": 113442.0,
+      "minerva_round_size": 227301,
+      "minerva_combined_pvalue": 0.0,
+      "minerva_comparison_pvalue": 1.0,
+      "minerva_polling_pvalue": 0.0,
+      "minerva_alloc_lambda": -20.296150971599403,
+      "r2bravo_round_size": 227301,
+      "r2bravo_combined_pvalue": 0.0,
+      "r2bravo_comparison_pvalue": 1.0,
+      "r2bravo_polling_pvalue": 0.0,
+      "r2bravo_alloc_lambda": -20.296150971599403
+    }
+  ]
+}

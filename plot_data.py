@@ -49,7 +49,7 @@ fig.suptitle('Round Sizes for Varying Polling Stratum Sizes (for margin: '+str(o
 ax = fig.add_subplot(111)#numrows, numcols, num of subplot being referenced
 ax.scatter(percent_pollings, minerva_round_sizes, color='b', marker='o', label='Minerva')
 ax.scatter(percent_pollings, r2bravo_round_sizes, color='r', marker='x', label='R2 Bravo')
-ax.set_xlabel('Polling Stratum Size (as percent of relevant ballots)', fontsize=20)
+ax.set_xlabel('Polling Stratum Size (as proportion of relevant ballots)', fontsize=20)
 ax.set_ylabel('First Round Size (90% stopping probability)', fontsize=20)
 ax.plot([0,1],[minerva_round_size_no_stratification,minerva_round_size_no_stratification], label='Contest-Wide Minerva Audit', linestyle='dashed', color='b')
 ax.plot([0,1],[r2bravo_round_size_no_stratification,r2bravo_round_size_no_stratification], label='Contest-Wide R2 Bravo Audit', linestyle='dashed', color='r')
