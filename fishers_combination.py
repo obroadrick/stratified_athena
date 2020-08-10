@@ -1,3 +1,10 @@
+"""
+From SUITE work (Ottobani et al)
+
+Modified to allow for combination methods other than Fisher's
+
+"""
+
 import numpy as np
 import scipy as sp
 import scipy.stats
@@ -98,7 +105,7 @@ def create_modulus(n1, n2, n_w2, n_l2, N1, V_wl, gamma):
 
 
 def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
-    pvalue_funs, stepsize=0.05, modulus=None, alpha=0.05, feasible_lambda_range=None):
+    pvalue_funs, stepsize=0.05, modulus=None, alpha=0.05, feasible_lambda_range=None, combine_func=None):
     """
     Grid search to find the maximum P-value.
 
@@ -133,6 +140,9 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
     feasible_lambda_range : array-like
         lower and upper limits to search over lambda. 
         Optional, but a smaller interval will speed up the search.
+    combine_func : function
+        function used to combine strata pvalues
+        Optional (Defaults to Fisher's method), but allows for trying others
 
     Returns
     -------
@@ -151,6 +161,10 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
     tol : float
         if refined is True, this is an upper bound on potential approximation error of min_chisq
     """	
+
+    if (combine_func is None):
+        combine_func = fisher_combined_pvalue
+
     assert len(pvalue_funs)==2
     
     # find range of possible lambda
@@ -170,7 +184,7 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
         pvalue1s[i] = pvalue1
         pvalue2 = np.min([1, pvalue_funs[1](1-test_lambdas[i])])
         pvalue2s[i] = pvalue2
-        fisher_pvalues[i] = fisher_combined_pvalue([pvalue1, pvalue2])
+        fisher_pvalues[i] = combine_func([pvalue1, pvalue2])
         
     pvalue = np.max(fisher_pvalues)
     max_index = np.argmax(fisher_pvalues)

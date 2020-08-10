@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import json
 
 # loop through the various margins for which I would like results (run overnight)
-for fractional_margin in [.01, .02, .03, .04, .05, .06, .07, .08]:
+for fractional_margin in [.05]:#, .02, .03, .04, .05, .06, .07, .08]:
     # track all data in a struct for each margin, output to a json file
     data = {}
     data['audits'] = []

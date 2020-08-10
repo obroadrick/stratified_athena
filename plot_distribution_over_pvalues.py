@@ -12,6 +12,8 @@ from round_sizes import compute_dist_over_pvalues
 from scipy.stats import binom
 import math
 import matplotlib.pyplot as plt
+from fisher_stouffer import wtd_stouffer
+import numpy as np
 
 # these numbers correspond to a 53000/51000 contest with 
 #   5% of the relevant ballots in the polling stratum
@@ -27,8 +29,20 @@ alpha = .1
 stopping_probability = .9
 kmax = math.floor(binom.ppf(1 - stopping_probability, n2, N_w2 / N_2))
 
+############STOUFFER##################
+# throw stouffer function at it 
+weight = .5
+weights = np.array([weight, 1 - weight])
+print("\nweights:",weights)
+
+# define a stouffer function that uses the weights defined above
+def stouffer(pvalues):
+    np.array(pvalues)
+    return wtd_stouffer(pvalues, weights)
+############STOUFFER##################
+
 # compute distribution over pvalues 
-results = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None)
+results = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None, combine_func=stouffer)
 """
 Contents of results:
     "possible_winner_votes":possible_winner_votes,

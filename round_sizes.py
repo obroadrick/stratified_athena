@@ -28,7 +28,7 @@ import math
 import matplotlib.pyplot as plt
 from simulations import minerva_pvalue_direct_count, r2bravo_pvalue_direct_count
 
-def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None):
+def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None, combine_func=None):
     """
     Computes and returns lists of k values, their associated combined pvalue,
     and their probability under the null hypothesis for a 2-strata audit using
@@ -43,6 +43,7 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
         n2 (int): first round size in the polling stratum
         alpha (float): risk limit
         underlying (dict): feature not yet implemented (coming soon to a repo near you!)
+        combine_func (function): Optional function for combining pvalues (default to Fisher's method)
 
     Return {}:
         possible_winner_votes ([int]): possible number of winner votes in the polling sample
@@ -80,7 +81,7 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                modulus=mod, alpha=alpha, \
-                               feasible_lambda_range=feasible_lambda_range)['max_pvalue']
+                               feasible_lambda_range=feasible_lambda_range, combine_func=combine_func)['max_pvalue']
 
         pvalues.append(pvalue)
         #print("for k="+str(k)+"   pval="+str(pvalue))
@@ -179,7 +180,7 @@ def compute_stopping_probability(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlyi
 
     return prob_stop
 
-def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=None):
+def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=None, combine_func=None):
     """
     This function will also compute minimum round size for the 
     passed stopping probability, but it will do so much more 
@@ -226,7 +227,7 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                modulus=mod, alpha=alpha, \
-                               feasible_lambda_range=feasible_lambda_range)
+                               feasible_lambda_range=feasible_lambda_range, combine_func=combine_func)
         pvalue = combination_results['max_pvalue']
         pvalue_comparison = combination_results['pvalue1']
         pvalue_polling = combination_results['pvalue2']
@@ -325,7 +326,7 @@ def find_sample_size_for_stopping_prob_r2bravo(stopping_probability, N_w, N_l, a
             return right
 
 
-def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=None):
+def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=None, combine_func=None):
     """
     This function will also compute minimum round size for the 
     passed stopping probability, but it will do so much more 
@@ -367,7 +368,7 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                modulus=mod, alpha=alpha, \
-                               feasible_lambda_range=feasible_lambda_range)
+                               feasible_lambda_range=feasible_lambda_range, combine_func=combine_func)
 
         pvalue = combination_results['max_pvalue']
         pvalue_comparison = combination_results['pvalue1']
