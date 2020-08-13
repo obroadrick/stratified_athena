@@ -62,6 +62,7 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
     dist_over_winner_votes = binom.pmf(possible_winner_votes, n2, N_w2 / N_2)
 
     pvalues = []
+    lambdas = []
 
     for k, pr_k in zip(possible_winner_votes, dist_over_winner_votes):
 
@@ -77,19 +78,24 @@ def compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=
                                 Vw=N_w2, Vl=N_l2, \
                                 null_margin=(N_w2-N_l2) - alloc*margin)
 
-        pvalue = maximize_fisher_combined_pvalue(N_w1, N_l1, \
+        results = maximize_fisher_combined_pvalue(N_w1, N_l1, \
                                N_1, N_w2, N_l2, N_2, \
                                pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                modulus=mod, alpha=alpha, \
-                               feasible_lambda_range=feasible_lambda_range, combine_func=combine_func)['max_pvalue']
-
+                               feasible_lambda_range=feasible_lambda_range, combine_func=combine_func)
+        pvalue = results['max_pvalue']
+        refined = results['refined']
+        alloc_lambda = results['allocation lambda']
+        
         pvalues.append(pvalue)
-        #print("for k="+str(k)+"   pval="+str(pvalue))
+        lambdas.append(alloc_lambda)
+        print("for k="+str(k)+"   pval="+str(round(pvalue,4))+"   refined:"+str(refined))
 
     return {
         "possible_winner_votes":possible_winner_votes,
         "dist_over_winner_votes":dist_over_winner_votes,
-        "pvalues":pvalues
+        "pvalues":pvalues,
+        "alloc_lambda":lambdas
     }
         
 

@@ -191,7 +191,10 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
     alloc_lambda = test_lambdas[max_index]
     pvalue1 = pvalue1s[max_index]
     pvalue2 = pvalue2s[max_index]
+
     
+    """
+    # REMOVED BECAUSE I WANT ACCURATE PVALUES EVEN WHEN GREATER THAN RISK LIMIT
     # If p-value is over the risk limit, then there's no need to refine the
     # maximization. We have a lower bound on the maximum.
     if pvalue > alpha or modulus is None:
@@ -204,6 +207,7 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
                 'stepsize' : stepsize,
                 'refined' : False
                 }
+    """
     
     # Use modulus of continuity for the Fisher combination function to check
     # how close this is to the true max
@@ -220,7 +224,8 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
                 'allocation lambda' : alloc_lambda,
                 'stepsize' : stepsize,
                 'tol' : mod,
-                'refined' : False
+                'refined' : False,
+                'num_refined' : 0
                 }
     else:
         lambda_lower = alloc_lambda - 2*stepsize
@@ -229,6 +234,8 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
             pvalue_funs, stepsize=stepsize/10, modulus=modulus, alpha=alpha, 
             feasible_lambda_range=(lambda_lower, lambda_upper))
         refined['refined'] = True
+        refined['num_refined'] += 1
+
         return refined
 
 

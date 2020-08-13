@@ -3,6 +3,7 @@ This script plots an example of a round size that achieves a 90% probability of 
 in a stratified audit using Minerva for the pollign stratum.
 Includes the pvalues and probabilities for all possible values of k and includes
 a marker of the value of kmax.
+Now also includes both Fisher and Stouffer combining function numbers.
 
 Oliver Broadrick 2020
 """
@@ -31,18 +32,23 @@ kmax = math.floor(binom.ppf(1 - stopping_probability, n2, N_w2 / N_2))
 
 ############STOUFFER##################
 # throw stouffer function at it 
-weight = .5
-weights = np.array([weight, 1 - weight])
-print("\nweights:",weights)
-
-# define a stouffer function that uses the weights defined above
-def stouffer(pvalues):
+weight1 = .5
+weights1 = np.array([weight1, 1 - weight1])
+weight2 = .4
+weights2 = np.array([weight2, 1 - weight2])
+# define stouffer functions for these weights
+def stouffer1(pvalues):
     np.array(pvalues)
-    return wtd_stouffer(pvalues, weights)
+    return wtd_stouffer(pvalues, weights1)
+def stouffer2(pvalues):
+    np.array(pvalues)
+    return wtd_stouffer(pvalues, weights2)
 ############STOUFFER##################
 
-# compute distribution over pvalues 
-results = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None, combine_func=stouffer)
+# compute distribution over pvalues for stouffer and fisher
+fisher_results = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None)
+stouffer_results1 = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None, combine_func=stouffer1)
+#stouffer_results2 = compute_dist_over_pvalues(N_w1, N_l1, N_w2, N_l2, n1, n2, alpha, underlying=None, combine_func=stouffer2)
 """
 Contents of results:
     "possible_winner_votes":possible_winner_votes,
@@ -53,8 +59,12 @@ Contents of results:
 # put everything in a pretty plot
 fig = plt.figure(figsize=(20,10))
 axes = fig.add_subplot(111)
-axes.scatter(results['possible_winner_votes'], results['pvalues'],linestyle="solid",color="blue", label="pvalue produced by this k")
-axes.scatter(results['possible_winner_votes'], results['dist_over_winner_votes'],linestyle="solid",color="red", label="probability of k under alt")
+axes.scatter(fisher_results['possible_winner_votes'], fisher_results['pvalues'],linestyle="solid",color="blue", label="pvalue (fishers)")
+axes.scatter(fisher_results['possible_winner_votes'], fisher_results['alloc_lambda'],color="c", label="lambda (fishers)", marker="x")
+axes.scatter(fisher_results['possible_winner_votes'], fisher_results['dist_over_winner_votes'],linestyle="solid",color="red", label="probability of k under alt")
+axes.scatter(stouffer_results1['possible_winner_votes'], stouffer_results1['pvalues'],linestyle="solid",color="g", label="pvalue (stouffer "+str(weights1)+")")
+axes.scatter(stouffer_results1['possible_winner_votes'], stouffer_results1['alloc_lambda'],linestyle="solid",color="y", label="lambda (stouffer "+str(weights1)+")", marker="x")
+#axes.scatter(stouffer_results2['possible_winner_votes'], stouffer_results2['pvalues'],linestyle="solid",color="c", label="pvalue (stouffer "+str(weights2)+")")
 axes.plot([kmax,kmax], [0, 1], linestyle="dashed", label="kmax="+str(kmax)+" (.9 quantile to right)")
 axes.plot([0,n2],[alpha,alpha], linestyle="dashed", label="alpha")
 plt.legend(loc='upper right', fontsize=20)

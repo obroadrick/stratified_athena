@@ -67,11 +67,11 @@ def print_ps(p1, p2):
     print("optimal weighted Stouffer", res["p"])
     print("weights:", res["wts"])
 
-
+"""
 print_ps(0.1, 0.1)
 print_ps(0.14, 0.16)
 print_ps(0.05, 0.3)
 print_ps(0.01, 0.5)
 print_ps(0.02, 0.7)
 print_ps(0.02, 1)
-
+"""

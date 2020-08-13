@@ -80,7 +80,7 @@ n1 = 750
 stopping_probability = .9
 
 # define weights for the stouffer combination
-weights = np.array([.7, .3])
+weights = np.array([.5, .5])
 
 weight = .05
 while weight < 1:
