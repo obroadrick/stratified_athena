@@ -1,0 +1,4 @@
+output corresponding to .1 polling stratum size of data_stratified.txt with new method:
+{'pvalue': 757789.4661028692, 'x1': 47700, 'search_iterations': 4}
+time: 121.81515824794769 minutes
+

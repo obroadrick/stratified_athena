@@ -18,9 +18,6 @@ import json
 from fisher_stouffer import wtd_stouffer
 import numpy as np
 
-# loop through the various margins for which I would like results (run overnight)
-fractional_margin = .02
-
 # track all data in a struct, output to a json file
 data = {}
 data['audits'] = []
@@ -28,17 +25,11 @@ data['audits'] = []
 # file name for data 
 data_file_name = 'data/data_stouffer_1.txt'
 
-# define the proportion of relevant ballots in the polling stratum
-proportion_polling = .05
-
-# define right bounds for round size search (defaults to stratum size)
-minerva_right = 100000
-r2bravo_right = 100000
-
 # risk limit (same as suite example 1)
 alpha = 0.1
 
-# overall relevant ballot tallies (same as suite example 1)
+# overall relevant ballot tallies
+fractional_margin = .02
 N_relevant = 104000
 N_w = round(N_relevant * (1 + fractional_margin) / 2)
 N_l = 104000 - N_w
@@ -46,6 +37,8 @@ N_w_fraction = N_w / N_relevant
 
 # divide the ballots into strata
 # all strata will have the same margin as the overall contest
+# define the proportion of relevant ballots in the polling stratum
+proportion_polling = .5
 N_2 = round(proportion_polling * N_relevant)
 N_1 = N_relevant - N_2
 N_w1 = round(N_w_fraction * N_1)
@@ -79,8 +72,9 @@ n1 = 750
 #   the contest truly is as announced
 stopping_probability = .9
 
-# define weights for the stouffer combination
-weights = np.array([.5, .5])
+# define right bounds for round size search (defaults to stratum size)
+minerva_right = None
+r2bravo_right = None
 
 weight = .05
 while weight < 1:
@@ -92,7 +86,7 @@ while weight < 1:
         return wtd_stouffer(pvalues, weights)
 
     # obtain and print the minerva round size along with pvalues and lambda
-    minerva_results = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=minerva_right, combine_func=stouffer)
+    minerva_results = find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=minerva_right, combine_func=stouffer, stouffers=True)
     print ("minerva_round_size: "+str(minerva_results['round_size']))
     print("combined_pvalue: "+str(minerva_results['combined_pvalue']))
     print("comparison pvalue: "+str(minerva_results['comparison_pvalue']))
@@ -100,7 +94,7 @@ while weight < 1:
     print("alloc_lambda: "+str(minerva_results['alloc_lambda']))
 
     # obtain and print the r2bravo round size along with pvalues and lambda
-    r2bravo_results = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=r2bravo_right, combine_func=wtd_stouffer)
+    r2bravo_results = find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability, N_w1, N_l1, N_w2, N_l2, n1, alpha, underlying=None, right=r2bravo_right, combine_func=wtd_stouffer, stouffers=True)
     print ("r2bravo_round_size: "+str(r2bravo_results['round_size']))
     print("combined_pvalue: "+str(r2bravo_results['combined_pvalue']))
     print("comparison pvalue: "+str(r2bravo_results['comparison_pvalue']))
