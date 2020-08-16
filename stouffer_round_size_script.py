@@ -29,7 +29,7 @@ data_file_name = 'data/data_stouffer_1.txt'
 alpha = 0.1
 
 # overall relevant ballot tallies
-fractional_margin = .02
+fractional_margin = .1
 N_relevant = 104000
 N_w = round(N_relevant * (1 + fractional_margin) / 2)
 N_l = 104000 - N_w

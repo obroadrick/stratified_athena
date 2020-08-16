@@ -237,7 +237,7 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
                                    feasible_lambda_range=feasible_lambda_range, stouffers=combine_func)
 
         else:
-             combination_results = maximize_stouffers_combined_pvalue(n1, kmax, N_w1, N_l1, \
+             combination_results = maximize_stouffers_combined_pvalue(N_w1, N_l1, \
                                    N_1, N_w2, N_l2, N_2, \
                                    pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                    alpha=alpha, \
@@ -385,7 +385,7 @@ def find_sample_size_for_stopping_prob_efficiently_r2bravo(stopping_probability,
                                    modulus=mod, alpha=alpha, \
                                    feasible_lambda_range=feasible_lambda_range, combine_func=combine_func)
         else:
-            combination_results = maximize_stouffers_combined_pvalue(n1, kmax, N_w1, N_l1, \
+            combination_results = maximize_stouffers_combined_pvalue(N_w1, N_l1, \
                                    N_1, N_w2, N_l2, N_2, \
                                    pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                    alpha=alpha, \

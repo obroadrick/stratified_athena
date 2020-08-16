@@ -181,9 +181,9 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
     pvalue1s = np.empty_like(test_lambdas)
     pvalue2s = np.empty_like(test_lambdas)
     for i in range(len(test_lambdas)):
-        pvalue1 = np.min([1, pvalue_funs[0](test_lambdas[i])])
+        pvalue1 = float(np.min([1, pvalue_funs[0](test_lambdas[i])]))
         pvalue1s[i] = pvalue1
-        pvalue2 = np.min([1, pvalue_funs[1](1-test_lambdas[i])])
+        pvalue2 = float(np.min([1, pvalue_funs[1](1-test_lambdas[i])]))
         pvalue2s[i] = pvalue2
         fisher_pvalues[i] = combine_func([pvalue1, pvalue2])
         
@@ -239,23 +239,23 @@ def maximize_fisher_combined_pvalue(N_w1, N_l1, N1, N_w2, N_l2, N2,
 
         return refined
 
-def maximize_stouffers_combined_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, pvalue_funs, stouffers, lower_bound=None, upper_bound=None, alpha=0.05):
+def maximize_stouffers_combined_pvalue(N_w1, N_l1, N_w2, N_l2, n1, n2, pvalue_funs, stouffers, lower_bound=None, upper_bound=None, alpha=0.05):
     """
     Maximizes the stouffer combined pvalue for the given sample by searching
     over all possible allocations of winner votes under the null
     hypothesis.
 
     Parameters:
-        k_c : matches in comparison sample
-        k_p : winner votes in polling sample
         N_w1 : reported winner votes in comparison stratum
         N_l1 : reported loser votes in comparison stratum
         N_w2 : reported winner votes in polling stratum
         N_lw : reported loser votes in polling stratum
         n1 : comparison sample size (first round)
         n2 : polling sample size (first round)
-        x1_l : lower bound for winner votes in comparison stratum under the null
-        x1_u : upper bound for winner votes in comparison stratum under the null
+        lower_bound : lower bound for winner votes in comparison stratum under the null
+        upper_bound : upper bound for winner votes in comparison stratum under the null
+        stouffers : combination function with desired weights (pvalues as input)
+        pvalue_funs : functions for computing the independent pvalues
 
     Return: dict with
         pvalue : maximum pvalue found
@@ -263,7 +263,7 @@ def maximize_stouffers_combined_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2,
     
     if lower_bound is None or upper_bound is None:
         # compute bounds for search
-        bounds = compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_c, k_p)
+        bounds = compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2)
         lower_bound = bounds['x1_l']
         upper_bound = bounds['x1_u']
 
@@ -275,19 +275,28 @@ def maximize_stouffers_combined_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2,
     # define a step size and generate lists for testing
     divisions = 50 # could tweak this for effiency
     step_size = math.ceil((upper_bound - lower_bound) / divisions)
-    test_xs = np.arange(lower_bound, upper_bound, step_size)
+    test_xs = np.arange(lower_bound, upper_bound + step_size, step_size)
     stouffers_pvalues = np.empty_like(test_xs, dtype=float)
-    pvalue1s = np.empty_like(test_xs)
-    pvalue2s = np.empty_like(test_xs)
- 
+    pvalue1s = np.empty_like(stouffers_pvalues)
+    pvalue2s = np.empty_like(stouffers_pvalues)
+    lambda1s = np.empty_like(stouffers_pvalues)
+
+    # convert test_xs into lambdas for comparison stratum
     for i in range(len(test_xs)):
         # compute null margin based on winner votes
         x1 = test_xs[i]
         null_margin1 = x1 - (N_w1 + N_l1 - x1)
 
         # convert null_margin1 to lambda
-        reported_margin = (N_w1 + N_w2) - (N_l1 + N_l2)
-        lambda1 = null_margin1 * 1.0 / reported_margin
+        reported_margin_overall = (N_w1 + N_w2) - (N_l1 + N_l2)
+        reported_margin1 = N_w1 - N_l1
+        lambda1 = (null_margin1 - reported_margin1) / (reported_margin_overall)
+        lambda1s[i] = lambda1
+        #print("lambda1:",lambda1)
+
+    for i in range(len(test_xs)):
+        # get lambda
+        lambda1 = lambda1s[i]
 
         # compute independent pvalues
         pvalue1 = np.min([1, pvalue_funs[0](lambda1)])
@@ -304,7 +313,9 @@ def maximize_stouffers_combined_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2,
         print("N_l2:",N_l2)
         print("x1:",x1)
         print("null_margin1:",null_margin1)
-        print("pvalue:",pvalue)
+        print("comparison pvalue:",pvalue1)
+        print("polling pvalue:",pvalue2)
+        print("stouffers_combined:",stouffers_pvalues[i])
         print("i+1:",i+1,"of",len(test_xs))
         """
 
@@ -315,6 +326,10 @@ def maximize_stouffers_combined_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2,
     pvalue1 = pvalue1s[max_index]
     pvalue2 = pvalue2s[max_index]
 
+    print("comparison pvalue:",pvalue1)
+    print("polling pvalue:",pvalue2)
+    print("stouffers_combined:",stouffers_pvalues[i])
+ 
     """
     print("max_index:",max_index)
     print("max_pvalue:",max_pvalue)
@@ -337,7 +352,7 @@ def maximize_stouffers_combined_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2,
         x1_u = max_x + 2 * step_size
 
         # perform refined search
-        refined = maximize_stouffers_combined_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=x1_l, upper_bound=x1_u, pvalue_funs=pvalue_funs, stouffers=stouffers)
+        refined = maximize_stouffers_combined_pvalue(N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=x1_l, upper_bound=x1_u, pvalue_funs=pvalue_funs, stouffers=stouffers)
 
         # increase iterations by 1 and return results
         refined['search_iterations'] += 1
