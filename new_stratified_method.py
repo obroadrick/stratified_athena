@@ -186,35 +186,6 @@ def generate_joint_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, null_margin1=0, plot=Fal
             alt_joint[k_c][k_p] = alt_dist_comparison[k_c] * alt_dist_polling[k_p]
             null_joint[k_c][k_p] = null_dist_comparison[k_c] * null_dist_polling[k_p]
 
-    if (plot):
-        # plot for viewing pleasure
-        fig = plt.figure()
-        axes = fig.gca(projection='3d')
-
-        X, Y = np.meshgrid(dist_range_polling, dist_range_comparison)
-
-        surf1 = axes.plot_surface(X, Y, alt_joint, label='joint dist under alt', cmap=cm.coolwarm, linewidth=0, antialiased=False)
-        # matplotlib error fixed with these two lines
-        surf1._facecolors2d=surf1._facecolors3d
-        surf1._edgecolors2d=surf1._edgecolors3d
-
-        surf2 =axes.plot_surface(X, Y, null_joint, label='joint dist under null', cmap=cm.seismic, linewidth=0, antialiased=False)
-        # matplotlib error fixed with these two lines
-        surf2._facecolors2d=surf2._facecolors3d
-        surf2._edgecolors2d=surf2._edgecolors3d
-
-        axes.legend(fontsize=20)
-
-        axes.set_xlabel('Polling Stratum: Winner Ballots', fontsize=20, labelpad=24)
-        axes.set_ylabel('Comparison Stratum: Matching Ballots', fontsize=20, labelpad=24)
-        axes.set_zlabel('Probability', fontsize=20, labelpad=24)
-
-        plt.setp(axes.get_xticklabels(), fontsize=18)
-        plt.setp(axes.get_yticklabels(), fontsize=18)
-        plt.setp(axes.get_zticklabels(), fontsize=18)
-
-        plt.show()
-
     return {
         'alt_joint': alt_joint,
         'null_joint': null_joint
@@ -237,11 +208,10 @@ def compute_pvalue_for_dist(k_c, k_p, alt_joint, null_joint):
     # sum the corners of the joint dists
     alt_corner = 0
     for k in range(k_c, len(alt_joint)):
-        alt_corner += sum(alt_joint[k][k_p:])
+        alt_corner += alt_joint[k][k_p:].sum()
     null_corner = 0
     for k in range(k_c, len(null_joint)):
-        null_corner += sum(null_joint[k][k_p:])
-
+        null_corner += null_joint[k][k_p:].sum()
     # pvalue is ratio of the corners
     return null_corner / alt_corner
 
@@ -287,7 +257,7 @@ def find_kmin_pairs(alpha, alt_joint, null_joint):
         'k_mins_p': k_mins_p
     }
 
-def plot_joint_dist_with_kmins(alt_joint, null_joint, k_mins_c, k_mins_p):
+def plot_joint_dist(alt_joint, null_joint, k_mins_c=None, k_mins_p=None):
     """
     Plots the joint probability distribution as well as the kmin line.
 
@@ -314,9 +284,10 @@ def plot_joint_dist_with_kmins(alt_joint, null_joint, k_mins_c, k_mins_p):
     surf2._facecolors2d=surf2._facecolors3d
     surf2._edgecolors2d=surf2._edgecolors3d
 
-    for k_min_c, k_min_p in zip(k_mins_c, k_mins_p):
-        z = [0,.06]
-        axes.plot([k_min_c,k_min_c], [k_min_p,k_min_p], z, linewidth=3, color='g')
+    if k_min_c is not None and k_min_p is not None:
+        for k_min_c, k_min_p in zip(k_mins_c, k_mins_p):
+            z = [0,.06]
+            axes.plot([k_min_c,k_min_c], [k_min_p,k_min_p], z, linewidth=3, color='g')
 
     axes.legend(fontsize=20)
 
@@ -330,7 +301,7 @@ def plot_joint_dist_with_kmins(alt_joint, null_joint, k_mins_c, k_mins_p):
 
     plt.show()
 
-def compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_c=0, k_p=0):
+def compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_p=0):
     """
     Computes upper and lower bounds for the number of winner votes in 
     the comparison stratum, x1. 
@@ -340,8 +311,6 @@ def compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_c=0, k_p=0):
         N_l1 : loser votes in comparison stratum
         N_w2 : winner votes in polling stratum
         N_lw : loser votes in polling stratum
-        k_c : matches in comparison sample
-            Optional: defaults to zero
         k_p : winner votes in polling sample
             Optional: defaults to zero
 
@@ -356,7 +325,7 @@ def compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_c=0, k_p=0):
 
     winner_votes_null = math.floor(N / 2)
 
-    x1_l = max(0, winner_votes_null - N2, k_c)
+    x1_l = max(0, winner_votes_null - N2)
     x1_u = min(N1 - k_p, winner_votes_null)
 
     return {
@@ -364,7 +333,7 @@ def compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_c=0, k_p=0):
         'x1_u' : x1_u
     }
 
-def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None):
+def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None, plot=False):
     """
     Maximizes the joint pvalue for the given sample by searching
     over all possible allocations of winner votes under the null
@@ -388,7 +357,7 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
     
     if lower_bound is None or upper_bound is None:
         # compute bounds for search
-        bounds = compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_c, k_p)
+        bounds = compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_p)
         lower_bound = bounds['x1_l']
         upper_bound = bounds['x1_u']
 
@@ -429,16 +398,23 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
         print("i+1:",i+1,"of",len(test_xs))
         """
 
-
     # get the maximum pvalue found
     max_index = np.argmax(pvalues)
     max_pvalue = pvalues[max_index]
     max_x = test_xs[max_index]
+
+    if plot:
+        # plot for viewing pleasure
+        plt.scatter(test_xs, pvalues, label='pvals for testxs', marker='o', color='b')
+        plt.show()
+
     """
     print("max_index:",max_index)
     print("max_pvalue:",max_pvalue)
     print("max_x:",max_x)
     """
+    if max_pvalue > 1:
+        print("how is the max pvalue",max_pvalue)
 
     # if step_size has reached 1, search is over
     if step_size == 1:
@@ -461,7 +437,6 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
    
 ###############   TEST THINGS WOOHOO   #########################
 
-"""
 N_w1 = 600
 N_l1 = 400
 N_w2 = 600
@@ -470,105 +445,16 @@ n1 = 100
 n2 = 150
 alpha = .1
 null_margin1 = 0
-plot = False
-k_c = 90
-k_p = 125
-
-joint_dist_results = generate_joint_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, null_margin1, plot)
-alt_joint = joint_dist_results['alt_joint']
-null_joint = joint_dist_results['null_joint']
-
-kmin_results = find_kmin_pairs(alpha, joint_dist_results['alt_joint'], joint_dist_results['null_joint'])
-k_mins_c = kmin_results['k_mins_c']
-k_mins_p = kmin_results['k_mins_p']
-
-print(k_mins_c)
-print(k_mins_p)
-
-plot_joint_dist_with_kmins(alt_joint, null_joint, k_mins_c, k_mins_p)
-"""
-
-"""
-N_w1 = 60
-N_l1 = 40
-N_w2 = 60
-N_l2 = 40
-n1 = 10
-n2 = 15
-alpha = .1
-k_c = 9
-k_p = 12
-
-
-results = maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None)
-print(results)
-"""
-
-
-"""
-LETS TRY TO REPLICATE A TRIAL AND BEAT IT!
-      "percent_polling": 0.05,
-      "N_relevant": 104000,
-      "N_w": 53000,
-      "N_l": 51000,
-      "N_2": 5200,
-      "N_1": 98800,
-      "N_w1": 50350,
-      "N_l1": 48450,
-      "N_w2": 2650,
-      "N_l2": 2550,
-      "minerva_round_size": 84,
-      "minerva_combined_pvalue": 0.08636737929003713,
-      "minerva_comparison_pvalue": 0.2410385629811352,
-      "minerva_polling_pvalue": 0.07063014160664928,
-      "minerva_alloc_lambda": 0.19456450000000156,
-      "r2bravo_round_size": 208,
-      "r2bravo_combined_pvalue": 0.08866865456278672,
-      "r2bravo_comparison_pvalue": 0.01884495212609485,
-      "r2bravo_polling_pvalue": 0.933506058896115,
-      "r2bravo_alloc_lambda": 0.5421737000000015
-#AND ANOTHER
-      "percent_polling": 0.1,
-      "N_relevant": 104000,
-      "N_w": 53000,
-      "N_l": 51000,
-      "N_2": 10400,
-      "N_1": 93600,
-      "N_w1": 47700,
-      "N_l1": 45900,
-      "N_w2": 5300,
-      "N_l2": 5100,
-      "minerva_round_size": 314,
-      "minerva_combined_pvalue": 0.09476826805247196,
-      "minerva_comparison_pvalue": 0.5156528394976762,
-      "minerva_polling_pvalue": 0.03707432824218867,
-      "minerva_alloc_lambda": 0.0858475999999846,
-      "r2bravo_round_size": 740,
-      "r2bravo_combined_pvalue": 0.09216942784585869,
-      "r2bravo_comparison_pvalue": 0.02481337562856968,
-      "r2bravo_polling_pvalue": 0.7440985264790503,
-      "r2bravo_alloc_lambda": 0.4781420999999825
- 
-"""
-N_w1 = 47700
-N_l1 = 45900
-N_w2 = 5300
-N_l2 = 5100
-n1 = 750
-n2 = 314
-alpha = .1
-k_c = n1
-k_p = 171
+k_c = 96
+k_p = 80
 
 start = time.time()
 
-results = maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None)
-
-
-print(results)
-
+results = maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None, plot=True)
 
 print("time:",(time.time()-start)/60,"minutes")
+
+print(results)
 
 
 
