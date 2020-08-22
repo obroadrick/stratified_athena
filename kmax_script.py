@@ -16,5 +16,8 @@ n = n2
 p = N_w2 / (N_w2 + N_l2)
 print(binom.ppf(q, n, p))
 
+def kmax(N_w2, N_l2, n2, quant):
+    return binom.ppf(quant, n2, N_w2 / (N_w2 + N_l2))
+
 
 

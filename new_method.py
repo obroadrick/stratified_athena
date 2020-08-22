@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import time
 
-def generate_comparison_dists(n, Vw, Vl, null_margin=0, plot=False):
+def generate_comparison_dists(n, Vw, Vl, null_margin=0, plot=False, print_data=False):
     """
     Generates the first round probability distributions over number 
     of matches for both the null and alternative hypothesis of 
@@ -37,31 +37,36 @@ def generate_comparison_dists(n, Vw, Vl, null_margin=0, plot=False):
         alt_dist : probability distribution over matches under the alternative hypothesis
         null_dist : probability distribution over matches under the null hypothesis
     """
-    # relevant ballots
+    # useful bits
     N = Vw + Vl
-
-    # reported margin from passed tallies
     reported_margin = Vw - Vl
     
-    # b is 2-vote overstatements under the null
-    #   reported_margin - 2b <= null_margin
-    b_null = math.floor((reported_margin - null_margin) / 2)
-    if b_null < 0:
-        # when b_null is less than 0, understatement errors are required to make this null_margin possible
-        # so for this case of only considering 2-vote overstatements, let's just say no errors
-        b_null = 0
-    #print("b_null:",b_null)
+    # compute minimum mismatches under the null
+    mismatches_null = math.ceil((reported_margin - null_margin) / 2)
+    if mismatches_null < 0:
+        # null_margin > reported margin, no overstatements needed
+        mismatches_null = 0
+    #print("mismatches_null:",mismatches_null)
 
-    # maximum number of matches under the null
-    #   x = N - b
-    x_null = N - b_null
-    #print("x_null:",x_null)
+    # maximum matches under the null
+    matches_null = N - mismatches_null
+    #print("matches_null:", matches_null)
 
-    # risk limiting prior (0's, .5 at x_null, then uniform)
-    if x_null == N:
-        prior = np.concatenate([np.zeros(x_null), np.array([1])])
+    # if print_data is true, print xnull and bnull
+    if print_data is True:
+        # get winner votes under null from null margin
+        x1 = (N + null_margin) / 2
+        # if in between rougly 270 - 80
+        if x1 > 272 and x1 < 283:
+            print("x1:",x1)
+            print("matches_null:",matches_null)
+            print("mismatches_null:",mismatches_null)
+
+    # risk limiting prior (0's, .5 at matches_null, then zeros, then uniform)
+    if matches_null >= N:
+        prior = np.concatenate([np.zeros(matches_null), np.array([1])])
     else:
-        prior = np.concatenate([np.zeros(x_null), np.array([.5]), np.full(N - x_null, .5 / (N - x_null))])
+        prior = np.concatenate([np.zeros(matches_null), np.array([.5]), np.full(N - matches_null, .5 / (N - matches_null))])
 
     """
     # plot for viewing pleasure
@@ -73,21 +78,19 @@ def generate_comparison_dists(n, Vw, Vl, null_margin=0, plot=False):
     dist_range = range(0, n + 1)
 
     # null dist is only affected by one point on prior
-    null_dist = binom.pmf(dist_range, n, x_null / N)
+    null_dist = binom.pmf(dist_range, n, matches_null / N)
 
-    # alt dist affected by uniform prior
-    alt_dist = np.empty(n + 1)
-    for k in dist_range:
-        for x in range(x_null + 1, N + 1):
-            alt_dist[k] += binom.pmf(k, n, x / N) * prior[x]
-    # normalize
-    alt_dist = alt_dist / sum(alt_dist)
-
-    """
-    # plot for viewing pleasure
-    plt.scatter(dist_range, alt_dist, label='alt dist (comparison)', marker='o', color='b')
-    plt.show()
-    """
+    if matches_null == N:
+        # in case of matches > N, alt should just be binom
+        alt_dist = binom.pmf(dist_range, n, matches_null / N)
+    else:
+        # otherwise alt dist affected by uniform prior
+        alt_dist = np.empty(n + 1)
+        for k in dist_range:
+            for x in range(matches_null + 1, N + 1):
+                alt_dist[k] += binom.pmf(k, n, x / N) * prior[x]
+        # normalize
+        alt_dist = alt_dist / sum(alt_dist)
 
     if (plot):
         # plot for viewing pleasure
@@ -132,7 +135,6 @@ def generate_polling_dists(n, Vw, Vl, null_margin=0, plot=False):
     alt_dist = binom.pmf(dist_range, n, Vw / N)
     null_dist = binom.pmf(dist_range, n, x / N)
 
-    # plot if option set true
     if (plot):
         # plot for viewing pleasure
         plt.scatter(dist_range, alt_dist, label='alt', marker='o', color='b')
@@ -145,7 +147,7 @@ def generate_polling_dists(n, Vw, Vl, null_margin=0, plot=False):
         'null_dist': null_dist
     }
 
-def generate_joint_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, null_margin1=0, plot=False):
+def generate_joint_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, null_margin1=0, plot=False, print_data=True):
     """
     Generates the joint probability distribution for the first round
     of a 2-strata (comparison and polling) audit.
@@ -167,7 +169,7 @@ def generate_joint_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, null_margin1=0, plot=Fal
     """
 
     # generate comparison dists
-    comparison_dists = generate_comparison_dists(n1, N_w1, N_l1, null_margin1)
+    comparison_dists = generate_comparison_dists(n1, N_w1, N_l1, null_margin1, print_data=True)
     dist_range_comparison = comparison_dists['dist_range']
     alt_dist_comparison = comparison_dists['alt_dist']
     null_dist_comparison = comparison_dists['null_dist']
@@ -191,7 +193,7 @@ def generate_joint_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, null_margin1=0, plot=Fal
         'null_joint': null_joint
     }
 
-def compute_pvalue_for_dist(k_c, k_p, alt_joint, null_joint):
+def compute_pvalue_from_joint_dist(k_c, k_p, alt_joint, null_joint):
     """
     Compute the pvalue for the passed joint distribution.
 
@@ -205,14 +207,44 @@ def compute_pvalue_for_dist(k_c, k_p, alt_joint, null_joint):
     Returns:
         float: pvalue (ratio of corners)
     """
-    # sum the corners of the joint dists
+    # sum the 'corners' of the joint dists
     alt_corner = 0
     for k in range(k_c, len(alt_joint)):
         alt_corner += alt_joint[k][k_p:].sum()
     null_corner = 0
     for k in range(k_c, len(null_joint)):
         null_corner += null_joint[k][k_p:].sum()
-    # pvalue is ratio of the corners
+
+    # pvalue is ratio of the 'corners'
+    return null_corner / alt_corner
+
+def compute_pvalue(k_c, k_p, alt_c, alt_p, null_c, null_p):
+    """
+    Compute the pvalue for the passed sample and distributions.
+    Directly calculate each joint probability from the 
+    independent distributions passed.
+
+    Parameters:
+        k_c: matches in comparison sample
+        k_p: winner votes in polling sample
+        alt_c : alternative distribution for comparison stratum
+        alt_p : alternative distribution for comparison stratum
+        null_c : null distribution for comparison stratum
+        null_p : null distribution for comparison stratum
+
+    Returns:
+        float: pvalue (ratio of corners)
+    """
+    alt_corner = 0
+    null_corner = 0
+
+    # compute sum of the 'corner' of the joint dist
+    for i in range(k_c, len(alt_c)):
+        for j in range (k_p, len(alt_p)):
+            alt_corner += alt_c[i] * alt_p[j]
+            null_corner += null_c[i] * null_p[j]
+
+    # pvalue is ratio of the 'corners'
     return null_corner / alt_corner
 
 def find_kmin_pairs(alpha, alt_joint, null_joint):
@@ -235,8 +267,8 @@ def find_kmin_pairs(alpha, alt_joint, null_joint):
     for k_c in range(len(alt_joint)):
         for k_p in range(len(alt_joint[0])):
 
-            # test if this pair of k's meet the stopping condition (you know, the stopping condition that I'm making up)
-            pvalue = compute_pvalue_for_dist(k_c, k_p, alt_joint, null_joint)
+            # test if this pair of k's meet the stopping condition
+            pvalue = compute_pvalue_from_joint_dist(k_c, k_p, alt_joint, null_joint)
 
             if not math.isnan(pvalue) and pvalue <= alpha:
                 # add these k mins to the lists
@@ -244,12 +276,11 @@ def find_kmin_pairs(alpha, alt_joint, null_joint):
                 k_mins_p.append(k_p)
 
                 """
-                # print for viewing pleasure
                 print("k_c:",k_c," k_p:",k_p)
                 print("pvalue:",pvalue)
                 """
 
-                # break after first k_p min is found for this value of k_c
+                # break after k_p min is found for this value of k_c
                 break
 
     return {
@@ -259,7 +290,8 @@ def find_kmin_pairs(alpha, alt_joint, null_joint):
 
 def plot_joint_dist(alt_joint, null_joint, k_mins_c=None, k_mins_p=None):
     """
-    Plots the joint probability distribution as well as the kmin line.
+    For viewing pleasure, plots the joint probability distribution as 
+    well as the kmin line if kmins are provided.
 
     Parameters:
         alt_joint : joint probability distribution under the alternative hypothesis
@@ -307,11 +339,11 @@ def compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_p=0):
     the comparison stratum, x1. 
 
     Parameters:
-        N_w1 : winner votes in comparison stratum
-        N_l1 : loser votes in comparison stratum
-        N_w2 : winner votes in polling stratum
-        N_lw : loser votes in polling stratum
-        k_p : winner votes in polling sample
+        N_w1 : winner ballots in comparison stratum
+        N_l1 : loser ballots in comparison stratum
+        N_w2 : winner ballots in polling stratum
+        N_lw : loser ballots in polling stratum
+        k_p : winner ballots already drawn
             Optional: defaults to zero
 
     Return: dict with
@@ -333,11 +365,11 @@ def compute_winner_vote_bounds(N_w1, N_l1, N_w2, N_l2, k_p=0):
         'x1_u' : x1_u
     }
 
-def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None, plot=False):
+def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None, plot=False, print_data=False):
     """
     Maximizes the joint pvalue for the given sample by searching
     over all possible allocations of winner votes under the null
-    hypothesis.
+    hypothesis. If maximum pvalue is greater than 1, 1 is returned.
 
     Parameters:
         k_c : matches in comparison sample
@@ -348,8 +380,9 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
         N_lw : reported loser votes in polling stratum
         n1 : comparison sample size (first round)
         n2 : polling sample size (first round)
-        x1_l : lower bound for winner votes in comparison stratum under the null
-        x1_u : upper bound for winner votes in comparison stratum under the null
+        lower_bound : lower bound for winner votes in comparison stratum under the null
+        upper_bound : upper bound for winner votes in comparison stratum under the null
+        plot : optional: set true for plot of pvalues vs. winner vote allocations
 
     Return: dict with
         pvalue : maximum pvalue found
@@ -361,13 +394,8 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
         lower_bound = bounds['x1_l']
         upper_bound = bounds['x1_u']
 
-    """
-    print("lower_bound:",lower_bound)
-    print("upper_bound:",upper_bound)
-    """
-
     # define a step size and generate lists for testing
-    divisions = 50 # could tweak this for effiency
+    divisions = 10 # could tweak this for effiency
     step_size = math.ceil((upper_bound - lower_bound) / divisions)
     test_xs = np.arange(lower_bound, upper_bound, step_size)
     pvalues = np.empty_like(test_xs, dtype=float)
@@ -377,26 +405,32 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
         x1 = test_xs[i]
         null_margin1 = x1 - (N_w1 + N_l1 - x1)
 
+        """
         # generate joint distributions
         dists = generate_joint_dist(N_w1, N_l1, N_w2, N_l2, n1, n2, null_margin1)
         alt_joint = dists['alt_joint']
         null_joint = dists['null_joint']
+        """
+        # generate comparison dists
+        comparison_dists = generate_comparison_dists(n1, N_w1, N_l1, null_margin1, print_data=True)
+        alt_c = comparison_dists['alt_dist']
+        null_c = comparison_dists['null_dist']
+
+        # generate polling dists
+        polling_dists = generate_polling_dists(n2, N_w2, N_l2, -1 * null_margin1)
+        alt_p = polling_dists['alt_dist']
+        null_p = polling_dists['null_dist']
 
         # compute pvalue
-        pvalue = compute_pvalue_for_dist(k_c, k_p, alt_joint, null_joint)
+        pvalue = compute_pvalue(k_c, k_p, alt_c, alt_p, null_c, null_p)
         pvalues[i] = pvalue
-   
-        """
-        # print for viewing pleasure
-        print("N_w1:",N_w1)
-        print("N_l1:",N_l1)
-        print("N_w2:",N_w2)
-        print("N_l2:",N_l2)
-        print("x1:",x1)
-        print("null_margin1:",null_margin1)
-        print("pvalue:",pvalue)
-        print("i+1:",i+1,"of",len(test_xs))
-        """
+        
+        # if pvalue greater than 1, don't bother searching any harder
+        return {
+                    'pvalue' : 1,
+                    'x1' : x1,
+                    'search_iterations' : 1
+                }
 
     # get the maximum pvalue found
     max_index = np.argmax(pvalues)
@@ -405,7 +439,7 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
 
     if plot:
         # plot for viewing pleasure
-        plt.scatter(test_xs, pvalues, label='pvals for testxs', marker='o', color='b')
+        plt.plot(test_xs, pvalues, label='pvals for testxs', marker='o', color='b', linestyle='solid')
         plt.show()
 
     """
@@ -413,10 +447,7 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
     print("max_pvalue:",max_pvalue)
     print("max_x:",max_x)
     """
-    if max_pvalue > 1:
-        print("how is the max pvalue",max_pvalue)
-
-    # if step_size has reached 1, search is over
+    # when step_size has reached 1, search is over
     if step_size == 1:
         return {
             'pvalue' : max_pvalue,
@@ -425,45 +456,50 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
         }
     else:
         # set bounds for refined search
-        x1_l = max_x - 2 * step_size
-        x1_u = max_x + 2 * step_size
+        lower_bound = max_x - step_size
+        upper_bound = max_x + step_size
 
         # perform refined search
-        refined = maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, x1_l, x1_u)
+        refined = maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound, upper_bound)
 
         # increase iterations by 1 and return results
         refined['search_iterations'] += 1
         return refined
-   
-###############   TEST THINGS WOOHOO   #########################
 
-N_w1 = 600
-N_l1 = 400
-N_w2 = 600
-N_l2 = 400
-n1 = 100
-n2 = 150
-alpha = .1
-null_margin1 = 0
-k_c = 96
-k_p = 80
+def find_minimum_round_size(N_w1, N_l1, N_w2, N_l2, n1, stop_prob, alpha):
+    """
+    Finds the minimum polling first round size that achieves the 
+    desired probability of stopping, stop_prob, assuming no errors
+    in the comparison sample, by linear search starting at 1.
 
-start = time.time()
+    Parameters:
+        N_w1 : reported winner votes in comparison stratum
+        N_l1 : reported loser votes in comparison stratum
+        N_w2 : reported winner votes in polling stratum
+        N_lw : reported loser votes in polling stratum
+        n1 : comparison stratum sample size
+        stop_prob : desired stopping probability
+        alpha : risk limit
 
-results = maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=None, upper_bound=None, plot=True)
+    Returns:
+        int : minimum first polling round size
+    """
 
-print("time:",(time.time()-start)/60,"minutes")
+    n2 = 1
+    while(1):
+        # find kmax such that Pr[k >= kmax] = stop_prob
+        kmax = math.floor(binom.ppf(stop_prob, n2, N_w2 / (N_w2 + N_l2)))
 
-print(results)
+        # check if kmax would meet stopping condition
+        pvalue = maximize_joint_pvalue(n1, kmax, N_w1, N_l1, N_w2, N_l2, n1, n2)['pvalue']
+        if (pvalue < alpha):
+            return n2
 
+        # print n2 and pvalue for viewing pleasure
+        print("n2:",n2,"pvalue:",pvalue)
 
-
-
-
-
-
-
-
+        # increment round size
+        n2 += 1
 
 
 
