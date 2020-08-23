@@ -273,7 +273,7 @@ def maximize_stouffers_combined_pvalue(N_w1, N_l1, N_w2, N_l2, n1, n2, pvalue_fu
     """
 
     # define a step size and generate lists for testing
-    divisions = 50 # could tweak this for effiency
+    divisions = 10 # could tweak this for effiency
     step_size = math.ceil((upper_bound - lower_bound) / divisions)
     test_xs = np.arange(lower_bound, upper_bound + step_size, step_size)
     stouffers_pvalues = np.empty_like(test_xs, dtype=float)
@@ -348,8 +348,8 @@ def maximize_stouffers_combined_pvalue(N_w1, N_l1, N_w2, N_l2, n1, n2, pvalue_fu
         }
     else:
         # set bounds for refined search
-        x1_l = max_x - 2 * step_size
-        x1_u = max_x + 2 * step_size
+        x1_l = max_x - step_size
+        x1_u = max_x + step_size
 
         # perform refined search
         refined = maximize_stouffers_combined_pvalue(N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=x1_l, upper_bound=x1_u, pvalue_funs=pvalue_funs, stouffers=stouffers)

@@ -425,12 +425,13 @@ def maximize_joint_pvalue(k_c, k_p, N_w1, N_l1, N_w2, N_l2, n1, n2, lower_bound=
         pvalue = compute_pvalue(k_c, k_p, alt_c, alt_p, null_c, null_p)
         pvalues[i] = pvalue
         
-        # if pvalue greater than 1, don't bother searching any harder
-        return {
-                    'pvalue' : 1,
-                    'x1' : x1,
-                    'search_iterations' : 1
-                }
+        # if pvalue greater than 1, just return 1
+        if pvalue > 1:
+            return {
+                        'pvalue' : 1,
+                        'x1' : x1,
+                        'search_iterations' : 1
+                    }
 
     # get the maximum pvalue found
     max_index = np.argmax(pvalues)
