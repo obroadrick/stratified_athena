@@ -20,7 +20,7 @@ for fractional_margin in [.05]:#, .02, .03, .04, .05, .06, .07, .08]:
     data['audits'] = []
 
     # file for data named based on margin
-    data_file_name = 'data/data_stratified_'+str(round(fractional_margin * 100))+'_percent_margin.txt'
+    data_file_name = 'data/data_stratified_'+str(round(fractional_margin * 100))+'_percent_margin_test.txt'
 
     # loop through the various percent sizes of the polling stratum
     for percent_polling in [.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,.85,.9,.95]:

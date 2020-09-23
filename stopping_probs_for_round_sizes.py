@@ -90,6 +90,6 @@ for n2 in n2s:
     data['stop_probs'].append(prob_stop)
 
 # output the data struct to a file
-with open('data/data_stopping_prob_for_round_sizes.txt', 'w') as outfile:
+with open('data/test.txt', 'w') as outfile:
     json.dump(data, outfile, indent=2)
 

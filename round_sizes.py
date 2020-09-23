@@ -234,7 +234,7 @@ def find_sample_size_for_stopping_prob_efficiently(stopping_probability, N_w1, N
                                    N_1, N_w2, N_l2, N_2, \
                                    pvalue_funs=[cvr_pvalue, nocvr_pvalue], \
                                    alpha=alpha, \
-                                   feasible_lambda_range=feasible_lambda_range, stouffers=combine_func)
+                                   feasible_lambda_range=feasible_lambda_range)
 
         else:
              combination_results = maximize_stouffers_combined_pvalue(N_w1, N_l1, \
